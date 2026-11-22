@@ -74,16 +74,16 @@
             <span class="nav-badge" id="navDriversBadge">6</span>
           </button>
           <button class="nav-item" data-page="catalog"><i data-lucide="package-search"></i><span class="nav-label">КАТАЛОГ</span></button>
-          <button class="nav-item" data-page="updates">
+          <button class="nav-item" data-page="updates" style="display:none">
             <i data-lucide="download-cloud"></i>
             <span class="nav-label">UPDATES</span>
             <span class="nav-badge nav-badge-accent" id="navUpdatesBadge">2</span>
           </button>
-          <button class="nav-item" data-page="optimization">
+          <button class="nav-item" data-page="optimization" style="display:none">
             <i data-lucide="gauge"></i>
             <span class="nav-label">OPTIMIZATION</span>
           </button>
-          <button class="nav-item" data-page="history">
+          <button class="nav-item" data-page="history" style="display:none">
             <i data-lucide="history"></i>
             <span class="nav-label">HISTORY</span>
           </button>
@@ -193,8 +193,8 @@
           <div class="section-block">
             <div class="section-header-row">
               <h3 class="section-title">RECENT ACTIVITY</h3>
-              <button class="link-btn" data-nav-target="history">
-                View Full Timeline <i data-lucide="arrow-right"></i>
+              <button class="link-btn" data-nav-target="drivers">
+                View Drivers <i data-lucide="arrow-right"></i>
               </button>
             </div>
             <div class="activity-list card-surface" id="dashboardActivityList">
@@ -259,10 +259,10 @@
                 <button class="btn-primary" id="installAllOfficialDriversBtn"><i data-lucide="download"></i> НАЙТИ И УСТАНОВИТЬ</button>
               </div>
             </div>
-            <div id="officialDriverStatus" style="margin-top:14px;color:var(--text-secondary);">Press “CHECK DRIVERS” to scan applicable updates for detected hardware.</div>
+            <div id="officialDriverStatus" style="margin-top:14px;color:var(--text-secondary);">Нажми «ПРОВЕРИТЬ», чтобы найти совместимые обновления драйверов.</div>
             <div id="officialDriverResults" style="display:grid;gap:10px;margin-top:12px;"></div>
             <div id="officialVendorLinks" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;"></div>
-            <p style="font-size:11px;color:var(--text-muted);margin-top:12px;">Install All downloads and installs only the driver updates currently offered to this PC by Windows Update. It does not force a restart. Some OEM laptop drivers may be newer or customized; prefer the laptop manufacturer's support page when Windows Update has no suitable package.</p>
+            <p style="font-size:11px;color:var(--text-muted);margin-top:12px;">Устанавливаются только драйверы, которые Microsoft Windows Update предлагает этому компьютеру. Перед установкой требуется подтверждение взрослого. Перезагрузка автоматически не выполняется.</p>
           </section>
 
           <!-- Horizontal Driver Cards -->
@@ -284,87 +284,6 @@
           </div>
           <div id="catalogGrid" class="optimization-grid"></div>
         </section>
-        <!-- ==================== 4. UPDATES ==================== -->
-        <section class="page" id="page-updates" aria-labelledby="updHeading">
-          <div class="page-header">
-            <div>
-              <h1 class="page-title" id="updHeading">Available Updates</h1>
-              <p class="page-subtitle">Real driver updates offered for the hardware detected on this PC.</p>
-            </div>
-          </div>
-
-          <!-- Prominent Updates Banner -->
-          <div class="updates-hero card-surface">
-            <div class="updates-hero-left">
-              <div class="updates-counter-badge">
-                <span class="updates-big-num" id="updatesAvailableBig">2</span>
-                <span class="updates-big-label">UPDATES<br/>READY</span>
-              </div>
-              <div class="updates-hero-text">
-                <h2 id="updatesHeroTitle">Game-Ready &amp; Audio Driver Packages Available</h2>
-                <p id="updatesHeroSubtitle">Select individual packages or deploy all queued updates simultaneously.</p>
-              </div>
-            </div>
-            <div class="updates-hero-actions">
-              <button class="btn-secondary" id="updateSelectedBtn">
-                <i data-lucide="check-square"></i>
-                <span>UPDATE SELECTED</span>
-              </button>
-              <button class="btn-primary" id="updateAllBtn">
-                <i data-lucide="sparkles"></i>
-                <span>UPDATE ALL</span>
-              </button>
-            </div>
-          </div>
-
-          <!-- Updates List -->
-          <div class="updates-list" id="updatesList">
-            <!-- Populated by script.js -->
-          </div>
-        </section>
-
-        <!-- ==================== 5. OPTIMIZATION ==================== -->
-        <section class="page" id="page-optimization" aria-labelledby="optHeading">
-          <div class="page-header">
-            <div>
-              <h1 class="page-title" id="optHeading">Gaming Optimization</h1>
-              <p class="page-subtitle">System-level tuning profiles to reduce latency and stabilize frame pacing.</p>
-            </div>
-            <div class="header-meta">
-              <span class="meta-chip cyan-chip" id="optActiveCountChip">
-                <i data-lucide="zap"></i>
-                3 / 5 Profiles Optimal
-              </span>
-            </div>
-          </div>
-
-          <div class="optimization-grid" id="optimizationGrid">
-            <!-- Populated by script.js -->
-          </div>
-        </section>
-
-        <!-- ==================== 6. HISTORY ==================== -->
-        <section class="page" id="page-history" aria-labelledby="histHeading">
-          <div class="page-header">
-            <div>
-              <h1 class="page-title" id="histHeading">Activity History</h1>
-              <p class="page-subtitle">Chronological audit log of scans, discovered packages, downloads, and status events.</p>
-            </div>
-            <div class="header-actions">
-              <div class="filter-bar compact" id="historyFilterBar">
-                <button class="filter-tab active" data-history-type="all">All Events</button>
-                <button class="filter-tab" data-history-type="scan">Scans</button>
-                <button class="filter-tab" data-history-type="install">Installs</button>
-                <button class="filter-tab" data-history-type="error">Alerts</button>
-              </div>
-            </div>
-          </div>
-
-          <div class="timeline-container card-surface" id="historyTimeline">
-            <!-- Populated by script.js -->
-          </div>
-        </section>
-
         <!-- ==================== 7. SETTINGS ==================== -->
         <section class="page" id="page-settings" aria-labelledby="setHeading">
           <div class="page-header">
