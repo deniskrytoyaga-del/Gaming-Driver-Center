@@ -247,6 +247,23 @@
             <button class="filter-tab" data-category="Other">Other</button>
           </div>
 
+          <section class="card-surface" id="officialDriverManager" style="padding:20px;margin:18px 0;">
+            <div style="display:flex;justify-content:space-between;gap:14px;align-items:center;flex-wrap:wrap;">
+              <div>
+                <h2 style="font-family:Rajdhani,sans-serif;font-size:21px;">OFFICIAL DRIVER CENTER</h2>
+                <p style="color:var(--text-secondary);margin-top:4px;">Checks driver updates offered for this exact PC by Microsoft Windows Update. No third-party driver packs.</p>
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap;">
+                <button class="btn-secondary" id="checkOfficialDriversBtn"><i data-lucide="refresh-cw"></i> CHECK DRIVERS</button>
+                <button class="btn-primary" id="installAllOfficialDriversBtn" disabled><i data-lucide="download"></i> INSTALL ALL</button>
+              </div>
+            </div>
+            <div id="officialDriverStatus" style="margin-top:14px;color:var(--text-secondary);">Press “CHECK DRIVERS” to scan applicable updates for detected hardware.</div>
+            <div id="officialDriverResults" style="display:grid;gap:10px;margin-top:12px;"></div>
+            <div id="officialVendorLinks" style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;"></div>
+            <p style="font-size:11px;color:var(--text-muted);margin-top:12px;">Install All downloads and installs only the driver updates currently offered to this PC by Windows Update. It does not force a restart. Some OEM laptop drivers may be newer or customized; prefer the laptop manufacturer's support page when Windows Update has no suitable package.</p>
+          </section>
+
           <!-- Horizontal Driver Cards -->
           <div class="drivers-list" id="driversList">
             <!-- Populated by script.js -->
@@ -567,5 +584,6 @@
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
   <script src="script.js"></script>
+  <script src="drivers.js"></script>
 </body>
 </html>
