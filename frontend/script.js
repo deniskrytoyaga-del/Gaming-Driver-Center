@@ -472,39 +472,47 @@
       <div class="timeline-meta"><span class="status-pill ${ev.type === 'error' ? 'status-not-found' : ev.type === 'install' ? 'status-up-to-date' : 'status-update-available'}">${escapeHtml(ev.badge)}</span><span class="timeline-time">${escapeHtml(ev.time)}</span></div></div>`).join('')}</div>`;
   }
 
+  async function persistSettings() {
+    try {
+      const response=await fetch('/api/settings',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(appState.settings)});
+      if(!response.ok) throw new Error('Не удалось сохранить настройки');
+    } catch(error) { showToast('Ошибка настроек',error.message,'error'); }
+  }
+  async function loadSettings() {
+    try {
+      const response=await fetch('/api/settings',{cache:'no-store'});
+      if(!response.ok) return;
+      const saved=await response.json();
+      appState.settings={...appState.settings,...saved};
+      document.body.classList.toggle('theme-cyan',appState.settings.accent==='cyan');
+      document.body.classList.toggle('no-glass',appState.settings.glass===false);
+      document.querySelectorAll('#accentSelector .seg-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.accent===appState.settings.accent));
+      const glass=document.getElementById('toggleGlass'); if(glass) glass.checked=appState.settings.glass!==false;
+      const lang=document.getElementById('languageSelect'); if(lang) lang.value=appState.settings.language||'ru';
+      const toast=document.getElementById('toggleToasts'); if(toast) toast.checked=appState.settings.toasts!==false;
+    } catch (_) {}
+  }
   function bindSettingsControls() {
-    document.querySelectorAll('#accentSelector .seg-btn').forEach((btn) => btn.addEventListener('click', () => {
-      document.querySelectorAll('#accentSelector .seg-btn').forEach((b) => b.classList.remove('active'));
-      btn.classList.add('active');
-      const accent = btn.getAttribute('data-accent');
-      appState.settings.accent = accent;
-      document.body.classList.toggle('theme-cyan', accent === 'cyan');
-      showToast('Appearance Updated', `Switched primary highlight to ${accent.toUpperCase()}.`, 'info');
+    document.querySelectorAll('#accentSelector .seg-btn').forEach(btn=>btn.addEventListener('click',()=>{
+      document.querySelectorAll('#accentSelector .seg-btn').forEach(x=>x.classList.remove('active'));
+      btn.classList.add('active'); appState.settings.accent=btn.dataset.accent;
+      document.body.classList.toggle('theme-cyan',btn.dataset.accent==='cyan');
+      persistSettings(); showToast('Настройки сохранены','Цвет интерфейса обновлён.','success');
     }));
-    const glassToggle = document.getElementById('toggleGlass');
-    if (glassToggle) glassToggle.addEventListener('change', (e) => {
-      appState.settings.glass = e.target.checked;
-      document.body.classList.toggle('no-glass', !e.target.checked);
+    const glass=document.getElementById('toggleGlass');
+    if(glass) glass.addEventListener('change',e=>{appState.settings.glass=e.target.checked;document.body.classList.toggle('no-glass',!e.target.checked);persistSettings();});
+    const lang=document.getElementById('languageSelect');
+    if(lang) lang.addEventListener('change',e=>{appState.settings.language=e.target.value;persistSettings();showToast('Настройки сохранены','Язык интерфейса будет применён после полной локализации.','info');});
+    const toast=document.getElementById('toggleToasts');
+    if(toast) toast.addEventListener('change',e=>{appState.settings.toasts=e.target.checked;persistSettings();});
+    const reset=document.getElementById('resetDemoBtn');
+    if(reset) reset.addEventListener('click',async()=>{
+      appState.settings={accent:'violet',glass:true,language:'ru',toasts:true};
+      document.body.classList.remove('theme-cyan','no-glass');
+      await persistSettings(); await loadSettings();
+      showToast('Настройки сброшены','Восстановлены стандартные настройки приложения.','success');
     });
-    const langSelect = document.getElementById('languageSelect');
-    if (langSelect) langSelect.addEventListener('change', (e) => {
-      appState.settings.language = e.target.value;
-      showToast('Language Preference Saved', `UI locale set to "${e.target.options[e.target.selectedIndex].text}".`, 'info');
-    });
-    const toastToggle = document.getElementById('toggleToasts');
-    if (toastToggle) toastToggle.addEventListener('change', (e) => { appState.settings.toasts = e.target.checked; });
-    const resetBtn = document.getElementById('resetDemoBtn');
-    if (resetBtn) resetBtn.addEventListener('click', () => {
-      const currentPage = appState.activePage;
-      appState = cloneState(INITIAL_DEMO_STATE);
-      appState.activePage = currentPage;
-      document.body.classList.remove('theme-cyan', 'no-glass');
-      document.querySelectorAll('#accentSelector .seg-btn').forEach((b) => b.classList.toggle('active', b.getAttribute('data-accent') === 'violet'));
-      const gt = document.getElementById('toggleGlass');
-      if (gt) gt.checked = true;
-      renderAll();
-      showToast('Demo State Restored', 'All simulated updates and counters reset to initial values.', 'info');
-    });
+    loadSettings();
   }
 
   function bindModalControls() {
@@ -517,17 +525,18 @@
 
   function openDriverModal(drv) {
     setModalContent({
-      kicker: `${drv.category.toUpperCase()} DRIVER PACKAGE`, title: drv.device, icon: drv.icon,
-      bodyHtml: `<div class="modal-kv-grid"><div class="modal-kv-item"><span>Vendor</span><strong>${escapeHtml(drv.vendor)}</strong></div><div class="modal-kv-item"><span>Status</span><strong>${escapeHtml(drv.status)}</strong></div><div class="modal-kv-item"><span>Installed Version</span><strong>${escapeHtml(drv.currentVersion)}</strong></div><div class="modal-kv-item"><span>Latest Release</span><strong>${escapeHtml(drv.latestVersion)}</strong></div><div class="modal-kv-item"><span>Release Date</span><strong>${escapeHtml(drv.releaseDate)}</strong></div><div class="modal-kv-item"><span>Package Size</span><strong>${escapeHtml(drv.size)}</strong></div></div><div class="modal-notes">${escapeHtml(drv.notes)}</div>`,
-      footerHtml: `<button class="btn-secondary btn-sm" id="modalDismissBtn">Close</button>${drv.status !== 'UNKNOWN' ? '<button class="btn-primary btn-sm" id="modalActionBtn">Queue Package</button>' : ''}`,
-      onAction: () => { closeModal(); handleDriverInstallTrigger(drv); }
+      kicker: 'УСТАНОВЛЕННЫЙ ДРАЙВЕР',
+      title: drv.device,
+      icon: 'cpu',
+      bodyHtml: '<div class="modal-kv-grid"><div class="modal-kv-item"><span>Производитель</span><strong>'+escapeHtml(drv.vendor)+'</strong></div><div class="modal-kv-item"><span>Версия</span><strong>'+escapeHtml(drv.currentVersion)+'</strong></div><div class="modal-kv-item"><span>Класс устройства</span><strong>'+escapeHtml(drv.category)+'</strong></div><div class="modal-kv-item"><span>Дата</span><strong>'+escapeHtml(drv.releaseDate||'Не указана')+'</strong></div></div><div class="modal-notes">'+escapeHtml(drv.notes)+'</div>',
+      footerHtml: '<button class="btn-primary btn-sm" id="modalDismissBtn">Закрыть</button>'
     });
   }
 
   function openHardwareModal(hw) {
     setModalContent({
       kicker: `${hw.category.toUpperCase()} TELEMETRY`, title: hw.name, icon: hw.icon,
-      bodyHtml: `<div class="modal-kv-grid"><div class="modal-kv-item"><span>Manufacturer</span><strong>${escapeHtml(hw.vendor)}</strong></div><div class="modal-kv-item"><span>Bound Driver</span><strong>${escapeHtml(hw.driverVersion)}</strong></div>${hw.specs.map((s) => `<div class="modal-kv-item"><span>${escapeHtml(s.label)}</span><strong>${escapeHtml(s.value)}</strong></div>`).join('')}</div><div class="modal-notes">Hardware specification displayed from frontend demo profile. Ready to bind live WMI/PCIe telemetry via Python backend.</div>`,
+      bodyHtml: `<div class="modal-kv-grid"><div class="modal-kv-item"><span>Manufacturer</span><strong>${escapeHtml(hw.vendor)}</strong></div><div class="modal-kv-item"><span>Bound Driver</span><strong>${escapeHtml(hw.driverVersion)}</strong></div>${hw.specs.map((s) => `<div class="modal-kv-item"><span>${escapeHtml(s.label)}</span><strong>${escapeHtml(s.value)}</strong></div>`).join('')}</div><div class="modal-notes">Данные считаны из инвентаризации оборудования Windows.</div>`,
       footerHtml: '<button class="btn-primary btn-sm" id="modalDismissBtn">Done</button>'
     });
   }
