@@ -69,7 +69,6 @@
     bindSidebarCollapse();
     bindScanButtons();
     bindDriverFilters();
-    bindUpdateBulkActions();
     bindOfficialDriverCenter();
     bindHistoryFilters();
     bindSettingsControls();
@@ -260,30 +259,36 @@
     if (topScanBtn) topScanBtn.addEventListener('click', () => { switchPage('dashboard'); triggerScanPreview(); });
   }
 
-  function triggerScanPreview() {
+  async function triggerScanPreview() {
     if (appState.isScanning) return;
     appState.isScanning = true;
-    const panel = document.querySelector('.health-panel');
-    const btn = document.getElementById('scanPcBtn');
-    const btnText = document.getElementById('scanBtnText');
-    const hint = document.getElementById('scanSubHint');
-    if (panel) panel.classList.add('scanning');
-    if (btn) { btn.disabled = true; btn.classList.add('is-scanning'); }
-    if (btnText) btnText.textContent = 'SCANNING...';
-    if (hint) hint.textContent = 'Inspecting Windows hardware inventory...';
-    setTimeout(() => {
-      appState.isScanning = false;
-      appState.lastCheckLabel = 'Just now';
-      if (panel) panel.classList.remove('scanning');
-      if (btn) { btn.disabled = false; btn.classList.remove('is-scanning'); }
-      if (btnText) btnText.textContent = 'SCAN MY PC';
-      if (hint) hint.textContent = 'Windows hardware inventory refreshed';
-      appState.history.unshift({ id: `h-${Date.now()}`, type: 'scan', title: 'Hardware Scan Completed', description: 'Windows hardware inventory refreshed.', time: 'Just now', badge: 'SCAN COMPLETE' });
-      renderDashboard();
-      renderHistory();
-      refreshIcons();
-      showToast('Scan Complete', 'Hardware inventory refreshed.', 'info');
-    }, 1500);
+    const panel=document.querySelector('.health-panel');
+    const btn=document.getElementById('scanPcBtn');
+    const top=document.getElementById('quickScanTopBtn');
+    const label=document.getElementById('scanBtnText');
+    const hint=document.getElementById('scanSubHint');
+    if(panel) panel.classList.add('scanning');
+    if(btn) btn.disabled=true;
+    if(top) top.disabled=true;
+    if(label) label.textContent='СКАНИРОВАНИЕ…';
+    if(hint) hint.textContent='Получаю реальные данные Windows…';
+    try {
+      const response=await fetch('/api/system',{cache:'no-store'});
+      const result=await response.json();
+      if(!response.ok||!result.ok) throw new Error(result.error||'Ошибка сканирования');
+      appState={...appState,...result.data};
+      appState.lastCheckLabel=new Date().toLocaleString('ru-RU');
+      renderAll();
+      showToast('Сканирование завершено','Инвентаризация Windows обновлена.','success');
+    } catch(error) { showToast('Ошибка сканирования',error.message,'error'); }
+    finally {
+      appState.isScanning=false;
+      if(panel) panel.classList.remove('scanning');
+      if(btn) btn.disabled=false;
+      if(top) top.disabled=false;
+      if(label) label.textContent='СКАНИРОВАТЬ ПК';
+      if(hint) hint.textContent='Данные получены непосредственно из Windows';
+    }
   }
 
   function renderHardware() {
@@ -315,32 +320,27 @@
     });
   }
 
+  function driverCategory(drv) {
+    const value=(drv.category+' '+drv.device+' '+drv.vendor).toLowerCase();
+    if(/display|video|graphics|radeon|geforce|nvidia|intel.*(graphics|arc)/.test(value)) return 'Graphics';
+    if(/system|chipset|processor|smbus|pci/.test(value)) return 'Chipset';
+    if(/audio|sound/.test(value)) return 'Audio';
+    if(/net|wireless|wi.?fi|ethernet|bluetooth/.test(value)) return 'Network';
+    return 'Other';
+  }
   function renderDrivers() {
-    const list = document.getElementById('driversList');
-    if (!list) return;
-    const filtered = appState.drivers.filter((drv) => {
-      const matchesCat = appState.driverFilter === 'All' || drv.category === appState.driverFilter;
-      const matchesSearch = !appState.driverSearch || drv.device.toLowerCase().includes(appState.driverSearch) || drv.vendor.toLowerCase().includes(appState.driverSearch);
-      return matchesCat && matchesSearch;
+    const list=document.getElementById('driversList'); if(!list) return;
+    const filtered=appState.drivers.filter(drv=>{
+      const cat=driverCategory(drv);
+      const okCat=appState.driverFilter==='All'||cat===appState.driverFilter;
+      const okSearch=!appState.driverSearch||[drv.device,drv.vendor,drv.currentVersion,drv.category].join(' ').toLowerCase().includes(appState.driverSearch);
+      return okCat&&okSearch;
     });
-    if (filtered.length === 0) {
-      list.innerHTML = `<div class="empty-state-card card-surface"><div class="empty-state-icon"><i data-lucide="search-x"></i></div><h3>No matching drivers in current filter</h3><p style="color: var(--text-secondary);">No real driver inventory is available yet. Launch the Windows desktop app and run a hardware scan.</p></div>`;
-      return;
-    }
-    list.innerHTML = filtered.map((drv) => {
-      const canInstall = drv.status === 'UPDATE AVAILABLE' || drv.status === 'NOT FOUND';
-      const installLabel = drv.status === 'UP TO DATE' ? 'Reinstall' : 'Install';
-      return `<article class="driver-row-card card-surface"><div class="driver-device-icon"><i data-lucide="${drv.icon}"></i></div><div class="driver-main-info"><div class="driver-title-line"><span class="driver-device-name">${escapeHtml(drv.device)}</span><span class="driver-cat-tag">${escapeHtml(drv.category)}</span></div><div class="driver-vendor-name">${escapeHtml(drv.vendor)}</div></div>
-      <div class="driver-versions"><div class="ver-col"><span class="ver-lbl">Current</span><span class="ver-num">${escapeHtml(drv.currentVersion)}</span></div><div class="ver-col"><span class="ver-lbl">Available</span><span class="ver-num ${canInstall ? 'highlight' : ''}">${escapeHtml(drv.latestVersion)}</span></div></div>
-      <div class="driver-actions">${renderStatusPill(drv.status)}<button class="btn-secondary btn-sm" data-drv-details="${escapeHtml(drv.id)}">Details</button><button class="${canInstall ? 'btn-primary' : 'btn-secondary'} btn-sm" data-drv-install="${escapeHtml(drv.id)}" ${drv.status === 'UNKNOWN' ? 'disabled' : ''}>${installLabel}</button></div></article>`;
-    }).join('');
-    list.querySelectorAll('[data-drv-details]').forEach((btn) => btn.addEventListener('click', () => {
-      const drv = appState.drivers.find((d) => d.id === btn.getAttribute('data-drv-details'));
-      if (drv) openDriverModal(drv);
-    }));
-    list.querySelectorAll('[data-drv-install]').forEach((btn) => btn.addEventListener('click', () => {
-      const drv = appState.drivers.find((d) => d.id === btn.getAttribute('data-drv-install'));
-      if (drv) handleDriverInstallTrigger(drv);
+    if(!filtered.length) { list.innerHTML='<div class="empty-state-card card-surface" style="padding:22px;">Драйверы не найдены. Измени поиск или запусти сканирование ПК.</div>'; return; }
+    list.innerHTML=filtered.map(drv=>'<article class="driver-row-card card-surface"><div class="driver-device-icon"><i data-lucide="cpu"></i></div><div class="driver-main-info"><div class="driver-title-line"><span class="driver-device-name">'+escapeHtml(drv.device)+'</span><span class="driver-cat-tag">'+escapeHtml(driverCategory(drv))+'</span></div><div class="driver-vendor-name">'+escapeHtml(drv.vendor)+'</div></div><div class="driver-versions"><div class="ver-col"><span class="ver-lbl">Установленная версия</span><span class="ver-num">'+escapeHtml(drv.currentVersion)+'</span></div><div class="ver-col"><span class="ver-lbl">Новая версия</span><span class="ver-num">Не проверялась</span></div></div><div class="driver-actions">'+renderStatusPill(drv.status)+'<button class="btn-secondary btn-sm" data-drv-details="'+escapeHtml(drv.id)+'">Подробнее</button></div></article>').join('');
+    list.querySelectorAll('[data-drv-details]').forEach(btn=>btn.addEventListener('click',()=>{
+      const drv=appState.drivers.find(x=>x.id===btn.getAttribute('data-drv-details'));
+      if(drv) openDriverModal(drv);
     }));
   }
 
