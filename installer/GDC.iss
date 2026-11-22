@@ -5,7 +5,8 @@ AppVersion=0.2.0
 AppPublisher=Denis
 DefaultDirName={autopf}\Gaming Driver Center
 DefaultGroupName=Gaming Driver Center
-OutputDir=dist
+; Paths are relative to this .iss file, which is inside installer/.
+OutputDir=..\dist
 OutputBaseFilename=GamingDriverCenter-Setup
 ArchitecturesInstallIn64BitMode=x64
 PrivilegesRequired=admin
@@ -17,7 +18,7 @@ SolidCompression=yes
 WizardStyle=modern
 
 [Files]
-Source: "dist\GamingDriverCenter\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
+Source: "..\dist\GamingDriverCenter\*"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs createallsubdirs
 
 [Icons]
 Name: "{autoprograms}\Gaming Driver Center"; Filename: "{app}\GamingDriverCenter.exe"
