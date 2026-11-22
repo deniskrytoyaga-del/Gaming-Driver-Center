@@ -238,6 +238,7 @@
       let response = await fetch('/api/driver-updates', {cache:'no-store'}); let result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.error || 'Не удалось проверить драйверы');
       const items = result.data.items || []; renderOfficialDriverResults(items);
+      appState.driverUpdatesChecked = true; appState.pendingDriverUpdates = items.length; renderDashboard();
       if (!items.length) { setOfficialStatus('Готово. Windows Update не нашёл подходящих обновлений драйверов для этого ПК.'); showToast('Драйверы актуальны', 'Windows Update не предлагает обновлений.', 'success'); return; }
       const names = items.slice(0,5).map(x => '• ' + (x.title || 'Драйвер')).join('\n');
       if (!window.confirm('Найдено обновлений драйверов: ' + items.length + '.\n\n' + names + (items.length>5?'\n• …':'') + '\n\nУстановить их через Microsoft Windows Update? Попроси родителя или взрослого подтвердить установку. Автоматической перезагрузки не будет.')) { setOfficialStatus('Установка отменена. Драйверы не устанавливались.'); return; }
