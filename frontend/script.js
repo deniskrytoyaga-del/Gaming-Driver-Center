@@ -70,6 +70,7 @@
     bindScanButtons();
     bindDriverFilters();
     bindUpdateBulkActions();
+    bindOfficialDriverCenter();
     bindHistoryFilters();
     bindSettingsControls();
     bindModalControls();
@@ -196,6 +197,60 @@
         return `<div class="activity-row"><div class="activity-left"><div class="activity-badge-icon ${meta.cls}"><i data-lucide="${meta.icon}"></i></div><div><div class="activity-title">${escapeHtml(ev.title)}</div><div class="activity-sub">${escapeHtml(ev.description)}</div></div></div><span class="activity-time">${escapeHtml(ev.time)}</span></div>`;
       }).join('');
     }
+  }
+
+  function bindOfficialDriverCenter() {
+    const action = document.getElementById('installAllOfficialDriversBtn');
+    const check = document.getElementById('checkOfficialDriversBtn');
+    if (action) action.addEventListener('click', runOneClickDriverUpdate);
+    if (check) check.addEventListener('click', checkOfficialDrivers);
+  }
+  function setOfficialStatus(message, error = false) {
+    const el = document.getElementById('officialDriverStatus');
+    if (el) { el.textContent = message; el.style.color = error ? 'var(--error)' : 'var(--text-secondary)'; }
+  }
+  function renderOfficialDriverResults(items) {
+    const root = document.getElementById('officialDriverResults');
+    if (!root) return;
+    if (!items || !items.length) { root.innerHTML = '<div class="empty-state-card"><p>Windows Update не предложил совместимых обновлений драйверов для этого компьютера.</p></div>'; return; }
+    root.innerHTML = items.map(item => '<article class="card-surface" style="padding:13px 16px;display:flex;justify-content:space-between;gap:14px;flex-wrap:wrap;"><div><strong>' + escapeHtml(item.title || 'Обновление драйвера') + '</strong><div style="color:var(--text-secondary);font-size:12px;margin-top:5px;">' + escapeHtml([item.driverManufacturer,item.driverModel,item.driverProvider].filter(Boolean).join(' • ') || 'Microsoft Windows Update') + '</div><div style="color:var(--text-muted);font-size:11px;margin-top:4px;">Версия: ' + escapeHtml(item.driverVersion || 'не указана') + '</div></div><span class="status-pill status-update-available">ДОСТУПНО</span></article>').join('');
+  }
+  async function checkOfficialDrivers() {
+    const check = document.getElementById('checkOfficialDriversBtn');
+    const action = document.getElementById('installAllOfficialDriversBtn');
+    if (check) check.disabled = true; if (action) action.disabled = true;
+    setOfficialStatus('Проверяю совместимые драйверы через Microsoft Windows Update…');
+    try {
+      const response = await fetch('/api/driver-updates', {cache:'no-store'}); const result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || 'Не удалось проверить обновления');
+      const items = result.data.items || []; renderOfficialDriverResults(items);
+      setOfficialStatus(items.length ? 'Найдено обновлений: ' + items.length + '. Нажми «НАЙТИ И УСТАНОВИТЬ», чтобы загрузить и установить их.' : 'Проверка завершена: подходящих обновлений драйверов нет.');
+      if (action) action.disabled = items.length === 0;
+      appState.lastCheckLabel = new Date().toLocaleString('ru-RU');
+      showToast('Проверка завершена', items.length ? 'Найдено обновлений: ' + items.length : 'Новых драйверов не найдено', items.length ? 'success' : 'info');
+      return items;
+    } catch (error) { setOfficialStatus('Ошибка проверки: ' + error.message, true); showToast('Не удалось проверить драйверы', error.message, 'error'); return null; }
+    finally { if (check) check.disabled = false; }
+  }
+  async function runOneClickDriverUpdate() {
+    const action = document.getElementById('installAllOfficialDriversBtn'); const check = document.getElementById('checkOfficialDriversBtn');
+    if (action) action.disabled = true; if (check) check.disabled = true;
+    try {
+      let response = await fetch('/api/driver-updates', {cache:'no-store'}); let result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || 'Не удалось проверить драйверы');
+      const items = result.data.items || []; renderOfficialDriverResults(items);
+      if (!items.length) { setOfficialStatus('Готово. Windows Update не нашёл подходящих обновлений драйверов для этого ПК.'); showToast('Драйверы актуальны', 'Windows Update не предлагает обновлений.', 'success'); return; }
+      const names = items.slice(0,5).map(x => '• ' + (x.title || 'Драйвер')).join('\n');
+      if (!window.confirm('Найдено обновлений драйверов: ' + items.length + '.\n\n' + names + (items.length>5?'\n• …':'') + '\n\nЗагрузить и установить их через Microsoft Windows Update? Автоматической перезагрузки не будет.')) { setOfficialStatus('Установка отменена. Драйверы не устанавливались.'); return; }
+      setOfficialStatus('Загружаю и устанавливаю драйверы через Microsoft Windows Update. Не закрывай приложение…');
+      response = await fetch('/api/driver-updates/install-all', {method:'POST',headers:{'Content-Type':'application/json','X-GDC-Confirm':'1'},body:'{}'}); result = await response.json();
+      if (!response.ok || !result.ok) throw new Error(result.error || 'Установка не выполнена');
+      const data = result.data || {}; const reboot = data.rebootRequired ? ' Требуется перезагрузка Windows.' : ' Перезагрузка не требуется.';
+      setOfficialStatus('Операция завершена. Обработано пакетов: ' + (data.found || 0) + '.' + reboot);
+      showToast('Установка завершена', 'Обработано пакетов: ' + (data.found || 0) + '.' + reboot, 'success');
+      await checkOfficialDrivers();
+    } catch (error) { setOfficialStatus('Ошибка установки: ' + error.message + '. Возможно, нужны права администратора или перезагрузка Windows.', true); showToast('Ошибка установки драйверов', error.message, 'error'); }
+    finally { if (action) action.disabled = false; if (check) check.disabled = false; }
   }
 
   function bindScanButtons() {
