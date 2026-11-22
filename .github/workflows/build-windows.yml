@@ -1,0 +1,35 @@
+name: Build Windows application
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "app.py"
+      - "backend/**"
+      - "frontend/**"
+      - "requirements.txt"
+      - ".github/workflows/build-windows.yml"
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: "pip"
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+      - name: Run backend tests
+        run: python -m unittest discover -s tests -v
+      - name: Build standalone EXE
+        run: pyinstaller --noconfirm --clean --windowed --name GamingDriverCenter --add-data "frontend;frontend" --collect-all webview app.py
+      - uses: actions/upload-artifact@v4
+        with:
+          name: Gaming-Driver-Center-Windows-x64
+          path: dist/GamingDriverCenter/
+          if-no-files-found: error
