@@ -236,7 +236,7 @@
       const items = result.data.items || []; renderOfficialDriverResults(items);
       if (!items.length) { setOfficialStatus('Готово. Windows Update не нашёл подходящих обновлений драйверов для этого ПК.'); showToast('Драйверы актуальны', 'Windows Update не предлагает обновлений.', 'success'); return; }
       const names = items.slice(0,5).map(x => '• ' + (x.title || 'Драйвер')).join('\n');
-      if (!window.confirm('Найдено обновлений драйверов: ' + items.length + '.\n\n' + names + (items.length>5?'\n• …':'') + '\n\nЗагрузить и установить их через Microsoft Windows Update? Автоматической перезагрузки не будет.')) { setOfficialStatus('Установка отменена. Драйверы не устанавливались.'); return; }
+      if (!window.confirm('Найдено обновлений драйверов: ' + items.length + '.\n\n' + names + (items.length>5?'\n• …':'') + '\n\nУстановить их через Microsoft Windows Update? Попроси родителя или взрослого подтвердить установку. Автоматической перезагрузки не будет.')) { setOfficialStatus('Установка отменена. Драйверы не устанавливались.'); return; }
       setOfficialStatus('Загружаю и устанавливаю драйверы через Microsoft Windows Update. Не закрывай приложение…');
       response = await fetch('/api/driver-updates/install-all', {method:'POST',headers:{'Content-Type':'application/json','X-GDC-Confirm':'1'},body:'{}'}); result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.error || 'Установка не выполнена');
@@ -459,7 +459,7 @@
   }
 
   function renderStatusPill(status) {
-    const map = { 'UP TO DATE': 'status-up-to-date', 'UPDATE AVAILABLE': 'status-update-available', 'NOT FOUND': 'status-not-found', UNKNOWN: 'status-unknown' };
+    const map = { 'UP TO DATE': 'status-up-to-date', 'UPDATE AVAILABLE': 'status-update-available', 'NOT FOUND': 'status-not-found', INSTALLED: 'status-up-to-date', UNKNOWN: 'status-unknown' };
     return `<span class="status-pill ${map[status] || 'status-unknown'}">${escapeHtml(status)}</span>`;
   }
 
