@@ -1,7 +1,7 @@
 [Setup]
 AppId={{A41F3B4C-3B8C-4E79-9C0D-DC4C1F8A6D21}
 AppName=Gaming Driver Center
-AppVersion=0.2.0
+AppVersion=0.4.0
 AppPublisher=Denis
 DefaultDirName={autopf}\Gaming Driver Center
 DefaultGroupName=Gaming Driver Center
