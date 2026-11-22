@@ -7,6 +7,7 @@ import webview
 from backend.system_info import collect_system, build_payload
 from backend.driver_updates import check_driver_updates, install_all_driver_updates
 from backend.software_catalog import get_software_catalog, install_catalog_package
+from backend.optimization import get_optimization_status, set_game_mode, set_startup, clean_user_temp
 
 def resource_path(relative: str) -> Path:
     base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
@@ -64,7 +65,7 @@ def get_settings():
 @app.post("/api/settings")
 def save_settings():
     payload = request.get_json(silent=True) or {}
-    safe = {k:v for k,v in payload.items() if k in {"language","accent","glass","toasts"}}
+    safe = {k:v for k,v in payload.items() if k in {"language","accent","glass","toasts","startupLaunch"}}
     SETTINGS_FILE.write_text(json.dumps(safe, ensure_ascii=False, indent=2), encoding="utf-8")
     return jsonify({"ok": True})
 
@@ -85,6 +86,51 @@ def install_all():
     except Exception as exc:
         app.logger.exception("Driver update installation failed")
         return jsonify({"ok": False, "error": str(exc)[:700]}), 500
+
+
+@app.get("/api/optimization")
+def optimization_status():
+    try:
+        return jsonify({"ok": True, "data": get_optimization_status()})
+    except Exception as exc:
+        app.logger.exception("Optimization status failed")
+        return jsonify({"ok": False, "error": str(exc)[:500]}), 500
+
+@app.post("/api/optimization/game-mode")
+def optimization_game_mode():
+    if request.headers.get("X-GDC-Confirm") != "1" or request.host != "127.0.0.1:8765":
+        return jsonify({"ok": False, "error": "Local confirmation required"}), 403
+    payload = request.get_json(silent=True) or {}
+    try:
+        return jsonify({"ok": True, "data": set_game_mode(bool(payload.get("enabled")))})
+    except Exception as exc:
+        app.logger.exception("Game Mode change failed")
+        return jsonify({"ok": False, "error": str(exc)[:500]}), 500
+
+@app.post("/api/optimization/clean-temp")
+def optimization_clean_temp():
+    if request.headers.get("X-GDC-Confirm") != "1" or request.host != "127.0.0.1:8765":
+        return jsonify({"ok": False, "error": "Local confirmation required"}), 403
+    try:
+        return jsonify({"ok": True, "data": clean_user_temp()})
+    except Exception as exc:
+        app.logger.exception("Temporary files cleanup failed")
+        return jsonify({"ok": False, "error": str(exc)[:500]}), 500
+
+@app.post("/api/settings/startup")
+def settings_startup():
+    if request.headers.get("X-GDC-Confirm") != "1" or request.host != "127.0.0.1:8765":
+        return jsonify({"ok": False, "error": "Local confirmation required"}), 403
+    payload = request.get_json(silent=True) or {}
+    try:
+        result = set_startup(bool(payload.get("enabled")))
+        current = json.loads(SETTINGS_FILE.read_text("utf-8")) if SETTINGS_FILE.exists() else {}
+        current["startupLaunch"] = bool(payload.get("enabled"))
+        SETTINGS_FILE.write_text(json.dumps(current, ensure_ascii=False, indent=2), encoding="utf-8")
+        return jsonify({"ok": True, "data": result})
+    except Exception as exc:
+        app.logger.exception("Startup setting failed")
+        return jsonify({"ok": False, "error": str(exc)[:500]}), 500
 
 @app.get("/api/system")
 def system():
