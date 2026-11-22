@@ -17,7 +17,7 @@
     driverSearch: '',
     historyFilter: 'all',
     isScanning: false,
-    lastCheckLabel: 'Today, 14:20 (Demo)',
+    lastCheckLabel: 'Not checked yet',
     settings: {
       accent: 'violet',
       glass: true,
@@ -30,52 +30,12 @@
       minimizeTray: true
     },
 
-    overview: [
-      { id: 'gpu', tag: 'GPU', icon: 'monitor', accentClass: 'cyan-accent', main: 'NVIDIA GeForce RTX 4070 Ti', sub: 'Demo • 12 GB GDDR6X • Game Ready' },
-      { id: 'cpu', tag: 'CPU', icon: 'cpu', accentClass: '', main: 'AMD Ryzen 7 7800X3D', sub: 'Demo • 8 Cores / 16 Threads • 5.0 GHz' },
-      { id: 'ram', tag: 'RAM', icon: 'memory-stick', accentClass: '', main: '32 GB DDR5 Dual-Channel', sub: 'Demo • 6000 MT/s • EXPO Enabled' },
-      { id: 'drivers', tag: 'DRIVERS', icon: 'shield-check', accentClass: 'green-accent', main: '4 / 6 Packages Current', sub: 'Demo • 2 Recommended Updates' }
-    ],
-
-    hardware: [
-      { category: 'Graphics Card', icon: 'monitor', name: 'NVIDIA GeForce RTX 4070 Ti', vendor: 'ASUS ROG Strix Edition (Demo)', driverVersion: '566.14 WHQL', status: 'UPDATE AVAILABLE', specs: [{ label: 'VRAM', value: '12 GB GDDR6X' }, { label: 'Bus Interface', value: 'PCIe 4.0 x16' }, { label: 'Boost Clock', value: '2760 MHz' }, { label: 'DirectX', value: '12 Ultimate' }] },
-      { category: 'Processor', icon: 'cpu', name: 'AMD Ryzen 7 7800X3D', vendor: 'Advanced Micro Devices (Demo)', driverVersion: '6.10.17.152', status: 'UP TO DATE', specs: [{ label: 'Architecture', value: 'Zen 4 + 3D V-Cache' }, { label: 'Cores / Threads', value: '8C / 16T' }, { label: 'L3 Cache', value: '96 MB' }, { label: 'Socket', value: 'AM5' }] },
-      { category: 'Motherboard', icon: 'circuit-board', name: 'ROG STRIX B650E-F GAMING WIFI', vendor: 'ASUSTeK Computer Inc. (Demo)', driverVersion: 'BIOS 3042', status: 'UP TO DATE', specs: [{ label: 'Chipset', value: 'AMD B650E' }, { label: 'PCIe Slot', value: 'Gen 5.0 Ready' }, { label: 'Form Factor', value: 'ATX' }, { label: 'TPM Module', value: 'TPM 2.0 Active' }] },
-      { category: 'Memory', icon: 'memory-stick', name: 'G.Skill Trident Z5 Neo RGB 32GB', vendor: 'G.Skill International (Demo)', driverVersion: 'SPD Rev 1.2', status: 'UP TO DATE', specs: [{ label: 'Capacity', value: '2 × 16 GB DDR5' }, { label: 'Speed', value: '6000 MT/s' }, { label: 'Timings', value: 'CL30-38-38-96' }, { label: 'Profile', value: 'AMD EXPO I' }] },
-      { category: 'Storage', icon: 'hard-drive', name: 'Samsung SSD 990 PRO 2TB', vendor: 'Samsung Electronics (Demo)', driverVersion: '4B2QJXD7', status: 'UP TO DATE', specs: [{ label: 'Protocol', value: 'NVMe 2.0 PCIe 4.0' }, { label: 'Sequential Read', value: '7,450 MB/s' }, { label: 'Health Status', value: '99% (Demo)' }, { label: 'DirectStorage', value: 'Supported' }] },
-      { category: 'Network', icon: 'wifi', name: 'Intel Wi-Fi 6E AX210 + 2.5GbE LAN', vendor: 'Intel Corporation (Demo)', driverVersion: '23.80.0.3', status: 'UP TO DATE', specs: [{ label: 'Wi-Fi Band', value: '2.4 / 5 / 6 GHz' }, { label: 'Ethernet Link', value: '2500 Mbps Full' }, { label: 'Low Latency', value: 'QoS Enabled' }, { label: 'Bluetooth', value: 'v5.3' }] },
-      { category: 'Audio', icon: 'volume-2', name: 'ROG SupremeFX ALC4080 HD Audio', vendor: 'Realtek / ASUS (Demo)', driverVersion: '6.3.9600.2368', status: 'UPDATE AVAILABLE', specs: [{ label: 'Codec', value: 'ALC4080 + Savitech' }, { label: 'Sample Rate', value: '32-bit / 384 kHz' }, { label: 'Spatial Audio', value: 'DTS Sound Unbound' }, { label: 'Interface', value: 'USB Audio Bus' }] }
-    ],
-
-    drivers: [
-      { id: 'drv-gpu', category: 'Graphics', icon: 'monitor', device: 'NVIDIA GeForce RTX 4070 Ti', vendor: 'NVIDIA Corporation', currentVersion: '566.14', latestVersion: '572.42 WHQL', status: 'UPDATE AVAILABLE', releaseDate: '2026-11-12', size: '684 MB', notes: 'Game-Ready support for latest AAA titles, DLSS Frame Generation latency improvements, and Reflex stability fixes (Demo Entry).' },
-      { id: 'drv-chipset', category: 'Chipset', icon: 'cpu', device: 'AMD B650E PCIe & GPIO Chipset Suite', vendor: 'AMD Inc.', currentVersion: '6.10.17.152', latestVersion: '6.10.17.152', status: 'UP TO DATE', releaseDate: '2026-10-04', size: '62 MB', notes: '3D V-Cache Performance Optimizer and Ryzen Power Plan scheduler definitions are current (Demo Entry).' },
-      { id: 'drv-audio', category: 'Audio', icon: 'volume-2', device: 'ROG SupremeFX ALC4080 USB Audio', vendor: 'Realtek Semiconductor', currentVersion: '6.3.9600.2368', latestVersion: '6.3.9600.2410', status: 'UPDATE AVAILABLE', releaseDate: '2026-11-05', size: '148 MB', notes: 'Reduces voice chat buffer jitter and updates Sonic Studio virtual surround routing (Demo Entry).' },
-      { id: 'drv-network', category: 'Network', icon: 'wifi', device: 'Intel Wi-Fi 6E AX210 160MHz', vendor: 'Intel Corporation', currentVersion: '23.80.0.3', latestVersion: '23.80.0.3', status: 'UP TO DATE', releaseDate: '2026-09-21', size: '44 MB', notes: '6 GHz channel stability and reduced packet jitter under competitive gaming loads (Demo Entry).' },
-      { id: 'drv-peripheral', category: 'Other', icon: 'gamepad-2', device: 'HID Gaming Wireless Receiver', vendor: 'Generic Peripheral Bus', currentVersion: '1.0.4.2', latestVersion: '—', status: 'UNKNOWN', releaseDate: '2026-06-15', size: '12 MB', notes: 'Custom vendor polling driver detected. Manual verification recommended once backend service connects (Demo Entry).' },
-      { id: 'drv-capture', category: 'Other', icon: 'usb', device: 'PCIe Capture Bridge Controller', vendor: 'Unassigned Device', currentVersion: 'Not Installed', latestVersion: '2.1.0.8', status: 'NOT FOUND', releaseDate: '2026-08-19', size: '28 MB', notes: 'Hardware ID detected without an active vendor driver package bound in demo profile.' }
-    ],
-
-    updates: [
-      { id: 'upd-gpu', driverId: 'drv-gpu', name: 'NVIDIA GeForce Game Ready Driver', version: '572.42 WHQL', size: '684 MB', releaseDate: 'Nov 12, 2026', selected: true, state: 'ready', progress: 0 },
-      { id: 'upd-audio', driverId: 'drv-audio', name: 'ROG SupremeFX ALC4080 Audio Package', version: '6.3.9600.2410', size: '148 MB', releaseDate: 'Nov 05, 2026', selected: true, state: 'ready', progress: 0 }
-    ],
-
-    optimizations: [
-      { id: 'opt-gamemode', title: 'Windows Game Mode', icon: 'gamepad-2', description: 'Prioritizes game thread scheduling and suppresses background Windows Update restarts during full-screen play.', status: 'ENABLED', optimal: true, impact: '+4% Frame Consistency', details: 'Windows Game Mode allocates dedicated CPU core affinity and stabilizes frame delivery in DirectX 12 titles (Demo Telemetry).' },
-      { id: 'opt-gpu-pref', title: 'Graphics Preferences', icon: 'sparkles', description: 'Hardware-Accelerated GPU Scheduling (HAGS) and High-Performance discrete GPU routing for detected games.', status: 'ENABLED', optimal: true, impact: '-2.4 ms Render Latency', details: 'Offloads frame queue management directly to the RTX 4070 Ti dedicated scheduling processor (Demo Telemetry).' },
-      { id: 'opt-power', title: 'Power Mode', icon: 'zap', description: 'High Performance processor state preventing aggressive core parking during sudden scene transitions.', status: 'BALANCED', optimal: false, impact: 'Recommended: High Performance', details: 'Current demo profile uses Balanced power plan. Switching to High Performance keeps boost clocks responsive.' },
-      { id: 'opt-startup', title: 'Startup Applications', icon: 'rocket', description: 'Manages non-essential background launchers and overlays that consume RAM at Windows login.', status: '4 HIGH IMPACT', optimal: false, impact: 'Save ~640 MB RAM', details: '4 background updaters are flagged as high startup impact in the current demo snapshot.' },
-      { id: 'opt-storage', title: 'Storage Management', icon: 'hard-drive', description: 'NVMe TRIM optimization and DirectStorage pipeline readiness across primary game libraries.', status: 'OPTIMAL', optimal: true, impact: '7,450 MB/s Ready', details: 'Samsung 990 PRO NVMe controller has TRIM active and 412 GB free headroom for shader caches (Demo Telemetry).' }
-    ],
-
-    history: [
-      { id: 'h-1', type: 'scan', title: 'Full System Hardware & Driver Scan', description: 'Scanned 7 hardware subsystems; identified 2 available driver updates (Demo Log).', time: 'Today, 14:20', badge: 'SCAN COMPLETE' },
-      { id: 'h-2', type: 'download', title: 'Release Manifest Synchronized', description: 'Fetched WHQL catalog metadata for NVIDIA RTX 40 Series & AMD AM5 (Demo Log).', time: 'Today, 14:19', badge: 'CATALOG SYNC' },
-      { id: 'h-3', type: 'install', title: 'AMD B650E Chipset Suite Updated', description: 'Package v6.10.17.152 verified and applied cleanly (Demo Log).', time: 'Nov 18, 19:45', badge: 'INSTALLED' },
-      { id: 'h-4', type: 'error', title: 'PCIe Capture Bridge Driver Missing', description: 'No bound driver package detected for secondary capture device (Demo Alert).', time: 'Nov 15, 11:12', badge: 'ATTENTION' },
-      { id: 'h-5', type: 'install', title: 'Intel Wi-Fi 6E AX210 Driver Installed', description: 'Updated wireless adapter firmware & driver to v23.80.0.3 (Demo Log).', time: 'Nov 10, 21:04', badge: 'INSTALLED' }
-    ]
+    overview: [],
+    hardware: [],
+    drivers: [],
+    updates: [],
+    optimizations: [],
+    history: [],
   };
 
   function cloneState(obj) {
@@ -220,8 +180,8 @@
     if (scoreEl) scoreEl.textContent = `${score}%`;
     if (captionEl) captionEl.textContent = remainingUpdates === 0 ? 'PEAK READY' : 'OPTIMAL';
     if (circleEl) circleEl.style.strokeDashoffset = (414.69 - (score / 100) * 414.69).toFixed(2);
-    if (titleEl) titleEl.textContent = remainingUpdates === 0 ? 'All Demo Drivers Synchronized' : `${remainingUpdates} Driver Update${remainingUpdates > 1 ? 's' : ''} Recommended`;
-    if (descEl) descEl.textContent = remainingUpdates === 0 ? 'Every tracked gaming subsystem is running the latest verified demo revision.' : 'Core chipset and storage controllers are synchronized. Updating remaining packages will unlock latest game-ready optimizations.';
+    if (titleEl) titleEl.textContent = appState.updates.length === 0 ? 'Driver status not checked' : (remainingUpdates === 0 ? 'No pending updates reported' : `${remainingUpdates} Driver Update${remainingUpdates > 1 ? 's' : ''} Found`);
+    if (descEl) descEl.textContent = appState.updates.length === 0 ? 'Run CHECK DRIVERS to look for compatible updates from Windows Update.' : (remainingUpdates === 0 ? 'No pending driver updates are currently listed.' : 'Compatible driver updates are available for review.');
     if (stateEl) {
       stateEl.textContent = remainingUpdates === 0 ? 'All Up To Date' : 'Action Recommended';
       stateEl.className = `metric-value ${remainingUpdates === 0 ? 'status-ok-text' : 'status-warn-text'}`;
@@ -255,19 +215,19 @@
     if (panel) panel.classList.add('scanning');
     if (btn) { btn.disabled = true; btn.classList.add('is-scanning'); }
     if (btnText) btnText.textContent = 'SCANNING...';
-    if (hint) hint.textContent = 'Inspecting demo hardware registry...';
+    if (hint) hint.textContent = 'Inspecting Windows hardware inventory...';
     setTimeout(() => {
       appState.isScanning = false;
-      appState.lastCheckLabel = 'Just now (Demo)';
+      appState.lastCheckLabel = 'Just now';
       if (panel) panel.classList.remove('scanning');
       if (btn) { btn.disabled = false; btn.classList.remove('is-scanning'); }
       if (btnText) btnText.textContent = 'SCAN MY PC';
-      if (hint) hint.textContent = 'Simulated frontend diagnostic';
-      appState.history.unshift({ id: `h-${Date.now()}`, type: 'scan', title: 'Manual UI Diagnostic Scan Completed', description: 'Verified 7 hardware modules against demo catalog snapshot.', time: 'Just now', badge: 'SCAN COMPLETE' });
+      if (hint) hint.textContent = 'Windows hardware inventory refreshed';
+      appState.history.unshift({ id: `h-${Date.now()}`, type: 'scan', title: 'Hardware Scan Completed', description: 'Windows hardware inventory refreshed.', time: 'Just now', badge: 'SCAN COMPLETE' });
       renderDashboard();
       renderHistory();
       refreshIcons();
-      showToast('Scan Preview Complete', 'Demo hardware status refreshed across all modules.', 'info');
+      showToast('Scan Complete', 'Hardware inventory refreshed.', 'info');
     }, 1500);
   }
 
@@ -309,7 +269,7 @@
       return matchesCat && matchesSearch;
     });
     if (filtered.length === 0) {
-      list.innerHTML = `<div class="empty-state-card card-surface"><div class="empty-state-icon"><i data-lucide="search-x"></i></div><h3>No matching drivers in current filter</h3><p style="color: var(--text-secondary);">Try clearing your search query or selecting the "All" category tab.</p></div>`;
+      list.innerHTML = `<div class="empty-state-card card-surface"><div class="empty-state-icon"><i data-lucide="search-x"></i></div><h3>No matching drivers in current filter</h3><p style="color: var(--text-secondary);">No real driver inventory is available yet. Launch the Windows desktop app and run a hardware scan.</p></div>`;
       return;
     }
     list.innerHTML = filtered.map((drv) => {
@@ -367,12 +327,12 @@
     const pendingCount = appState.updates.filter((u) => u.state !== 'completed').length;
     if (bigNum) bigNum.textContent = pendingCount;
     if (heroTitle && heroSub) {
-      if (pendingCount === 0) { heroTitle.textContent = 'All Queued Packages Deployed'; heroSub.textContent = 'Your demo system has completed all available driver installations.'; }
+      if (pendingCount === 0) { heroTitle.textContent = 'No verified updates listed'; heroSub.textContent = 'Run CHECK DRIVERS to check updates offered for this PC.'; }
       else { heroTitle.textContent = `${pendingCount} Driver Update Package${pendingCount > 1 ? 's' : ''} Available`; heroSub.textContent = 'Select individual packages or deploy all queued updates simultaneously.'; }
     }
     if (!list) return;
     if (appState.updates.length === 0) {
-      list.innerHTML = `<div class="empty-state-card card-surface"><div class="empty-state-icon"><i data-lucide="check-circle-2"></i></div><h3>Everything is Up to Date</h3><p style="color: var(--text-secondary);">No pending driver updates in the current demo profile.</p></div>`;
+      list.innerHTML = `<div class="empty-state-card card-surface"><div class="empty-state-icon"><i data-lucide="check-circle-2"></i></div><h3>No Verified Updates</h3><p style="color: var(--text-secondary);">No verified updates are listed. Run CHECK DRIVERS to search Windows Update.</p></div>`;
       return;
     }
     list.innerHTML = appState.updates.map((upd) => {
