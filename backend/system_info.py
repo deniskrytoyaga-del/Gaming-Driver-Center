@@ -61,11 +61,11 @@ def build_payload(raw):
         hw("Network","wifi",x.get("Name"),x.get("Manufacturer"),None,[("Link speed",x.get("Speed"))])
     drivers=[]
     for n,x in enumerate(drivers_raw):
-        drivers.append({"id":f"pnp-{n}","category":x.get("DeviceClass") or "Other","icon":"cpu","device":x.get("DeviceName") or "Unknown device","vendor":x.get("Manufacturer") or "Unknown","currentVersion":x.get("DriverVersion") or "Unknown","latestVersion":"Not checked","status":"UNKNOWN","releaseDate":str(x.get("DriverDate") or "")[:10],"size":"—","notes":("Signed driver" if x.get("IsSigned") else "Signature not confirmed")+f" • INF: {x.get('InfName') or '—'}"})
+        drivers.append({"id":f"pnp-{n}","category":x.get("DeviceClass") or "Other","icon":"cpu","device":x.get("DeviceName") or "Unknown device","vendor":x.get("Manufacturer") or "Unknown","currentVersion":x.get("DriverVersion") or "Unknown","latestVersion":"Not checked","status":"INSTALLED","releaseDate":str(x.get("DriverDate") or "")[:10],"size":"—","notes":("Signed driver" if x.get("IsSigned") else "Signature not confirmed")+f" • INF: {x.get('InfName') or '—'}"})
     overview=[
       {"id":"gpu","tag":"GPU","icon":"monitor","accentClass":"cyan-accent","main":g.get("Name","Not detected"),"sub":"Detected by Windows CIM"},
       {"id":"cpu","tag":"CPU","icon":"cpu","accentClass":"","main":c.get("Name","Not detected"),"sub":f"{c.get('NumberOfCores','?')} cores / {c.get('NumberOfLogicalProcessors','?')} threads"},
       {"id":"ram","tag":"RAM","icon":"memory-stick","accentClass":"","main":f"{ram_gb} GB" if ram_gb else "Not detected","sub":f"{len(ram)} memory module(s)"},
-      {"id":"drivers","tag":"DRIVERS","icon":"shield-check","accentClass":"green-accent","main":f"{len(drivers)} detected","sub":"Versions read from Windows • updates not compared"}
+      {"id":"drivers","tag":"DRIVERS","icon":"shield-check","accentClass":"green-accent","main":f"{len(drivers)} detected","sub":"Installed drivers detected • latest versions checked separately"}
     ]
-    return {"overview":overview,"hardware":hardware,"drivers":drivers,"lastCheckLabel":datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")}
+    return {"overview":overview,"hardware":hardware,"drivers":drivers,"updates":[],"lastCheckLabel":datetime.now().astimezone().strftime("%Y-%m-%d %H:%M")}
