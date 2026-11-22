@@ -6,7 +6,7 @@ from waitress import serve
 import webview
 from backend.system_info import collect_system, build_payload
 from backend.driver_updates import check_driver_updates, install_all_driver_updates
-from backend.software_catalog import get_software_catalog
+from backend.software_catalog import get_software_catalog, install_catalog_package
 
 def resource_path(relative: str) -> Path:
     base = Path(getattr(sys, "_MEIPASS", Path(__file__).resolve().parent))
@@ -41,6 +41,18 @@ def software_catalog():
     except Exception as exc:
         app.logger.exception("Software catalogue scan failed")
         return jsonify({"ok": False, "error": str(exc)[:500]}), 500
+
+
+@app.post("/api/software-catalog/install")
+def install_catalog():
+    if request.headers.get("X-GDC-Confirm") != "1" or request.host != "127.0.0.1:8765":
+        return jsonify({"ok": False, "error": "Local confirmation required"}), 403
+    payload = request.get_json(silent=True) or {}
+    try:
+        return jsonify({"ok": True, "data": install_catalog_package(str(payload.get("id", "")))})
+    except Exception as exc:
+        app.logger.exception("Catalog package installation failed")
+        return jsonify({"ok": False, "error": str(exc)[:700]}), 500
 
 @app.get("/api/settings")
 def get_settings():
