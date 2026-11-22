@@ -1,4 +1,4 @@
-name: Build Windows application
+name: Build Windows installer
 on:
   workflow_dispatch:
   push:
@@ -7,6 +7,7 @@ on:
       - "app.py"
       - "backend/**"
       - "frontend/**"
+      - "installer/**"
       - "requirements.txt"
       - ".github/workflows/build-windows.yml"
 permissions:
@@ -26,12 +27,16 @@ jobs:
           pip install -r requirements.txt
       - name: Run backend tests
         run: python -m unittest discover -s tests -v
-      - name: Build standalone EXE
-        run: pyinstaller --noconfirm --clean --onefile --windowed --name GamingDriverCenter --add-data "frontend;frontend" --collect-all webview app.py
-      - name: Publish direct EXE download
+      - name: Build application folder
+        run: pyinstaller --noconfirm --clean --onedir --windowed --name GamingDriverCenter --add-data "frontend;frontend" --collect-all webview app.py
+      - name: Install Inno Setup
+        run: choco install innosetup --yes --no-progress
+      - name: Build installer
+        run: iscc installer/GDC.iss
+      - name: Publish installer
         uses: softprops/action-gh-release@v2
         with:
           tag_name: gdc-build-${{ github.run_number }}
           name: Gaming Driver Center build ${{ github.run_number }}
           generate_release_notes: true
-          files: dist/GamingDriverCenter.exe
+          files: dist/GamingDriverCenter-Setup.exe
