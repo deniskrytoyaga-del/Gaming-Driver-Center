@@ -26,17 +26,18 @@
       const payload = await response.json();
       if (!response.ok || !payload.ok) return;
       const hardware = payload.data.hardware || [];
-      const drivers = payload.data.drivers || [];
-      const inventory = [...hardware.map(x => x.name), ...drivers.map(x => x.device), ...drivers.map(x => x.vendor)]
-        .join(' ').toLowerCase();
+      const gpuNames = hardware.filter(x => x.category === 'Graphics Card').map(x => x.name).join(' ').toLowerCase();
+      const cpuNames = hardware.filter(x => x.category === 'Processor').map(x => x.name).join(' ').toLowerCase();
+      const otherNames = hardware.filter(x => x.category === 'Network').map(x => x.name).join(' ').toLowerCase();
       const links = [];
-      if (/nvidia|geforce|quadro|rtx/.test(inventory)) {
+      // GPU download portals are shown only when that GPU vendor is actually detected.
+      if (/nvidia|geforce|quadro|rtx/.test(gpuNames)) {
         links.push(['NVIDIA official drivers', 'https://www.nvidia.com/en-us/drivers/']);
       }
-      if (/amd|radeon|ryzen/.test(inventory)) {
+      if (/amd|radeon/.test(gpuNames) || /amd|ryzen/.test(cpuNames)) {
         links.push(['AMD official drivers', 'https://www.amd.com/en/support/download/drivers.html']);
       }
-      if (/intel|arc|iris|uhd graphics/.test(inventory)) {
+      if (/intel|arc|iris|uhd graphics/.test(gpuNames) || /intel/.test(cpuNames + ' ' + otherNames)) {
         links.push(['Intel official drivers', 'https://www.intel.com/content/www/us/en/support/detect.html']);
       }
       if (!links.length) {
