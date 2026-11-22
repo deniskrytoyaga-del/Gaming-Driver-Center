@@ -17,7 +17,7 @@
       <div class="window-titlebar-left">
         <span class="demo-pill" title="Frontend UI Preview with Demo Data">
           <span class="demo-dot"></span>
-          DEMO PREVIEW MODE
+          LOCAL WINDOWS APP
         </span>
         <span class="window-breadcrumb" id="topBreadcrumb">DASHBOARD</span>
       </div>
@@ -97,11 +97,11 @@
           <div class="status-card">
             <div class="status-row">
               <span class="status-indicator online" id="engineStatusDot"></span>
-              <span class="status-text" id="engineStatusText">UI Ready • Demo Data</span>
+              <span class="status-text" id="engineStatusText">Local Windows Service</span>
             </div>
             <div class="version-row">
               <span class="version-label">Build</span>
-              <span class="version-value">v2.4.0-UI</span>
+              <span class="version-value">v0.3.0</span>
             </div>
           </div>
 
@@ -124,7 +124,7 @@
             <div class="header-meta">
               <span class="meta-chip">
                 <i data-lucide="shield-check"></i>
-                Profile: Performance Demo
+                Профиль: текущий компьютер
               </span>
             </div>
           </div>
@@ -185,7 +185,7 @@
                 <i data-lucide="scan-line" id="scanBtnIcon"></i>
                 <span id="scanBtnText">SCAN MY PC</span>
               </button>
-              <span class="scan-hint" id="scanSubHint">Simulated frontend diagnostic</span>
+              <span class="scan-hint" id="scanSubHint">Реальная проверка оборудования Windows</span>
             </div>
           </div>
 
@@ -384,73 +384,6 @@
               </div>
             </div>
 
-            <!-- Automatic Scanning -->
-            <div class="settings-card card-surface">
-              <div class="settings-card-header">
-                <div class="settings-icon"><i data-lucide="radar"></i></div>
-                <div>
-                  <h3>Automatic Scanning</h3>
-                  <p>Schedule parameters ready for Python service integration.</p>
-                </div>
-              </div>
-              <div class="settings-body">
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Scheduled Hardware Check</span>
-                    <span class="setting-desc">Automatically verify driver revisions in background</span>
-                  </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="toggleAutoScan" checked />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Scan Interval</span>
-                    <span class="setting-desc">Frequency passed to backend scheduler</span>
-                  </div>
-                  <select class="ui-select" id="scanIntervalSelect" aria-label="Scan Interval">
-                    <option value="daily" selected>Every 24 Hours</option>
-                    <option value="weekly">Weekly</option>
-                    <option value="launch">On App Launch</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            <!-- Startup Behavior -->
-            <div class="settings-card card-surface">
-              <div class="settings-card-header">
-                <div class="settings-icon"><i data-lucide="power"></i></div>
-                <div>
-                  <h3>Startup Behavior</h3>
-                  <p>Windows desktop shell launch and system tray preferences.</p>
-                </div>
-              </div>
-              <div class="settings-body">
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Launch with Windows</span>
-                    <span class="setting-desc">Start minimized in notification tray on boot</span>
-                  </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="toggleStartup" />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-                <div class="setting-row">
-                  <div class="setting-info">
-                    <span class="setting-name">Minimize to Tray on Close</span>
-                    <span class="setting-desc">Keep telemetry listener active when window closes</span>
-                  </div>
-                  <label class="toggle-switch">
-                    <input type="checkbox" id="toggleTray" checked />
-                    <span class="toggle-slider"></span>
-                  </label>
-                </div>
-              </div>
-            </div>
-
             <!-- About Application -->
             <div class="settings-card card-surface">
               <div class="settings-card-header">
@@ -476,7 +409,7 @@
                 <div class="about-actions">
                   <button class="btn-secondary btn-sm" id="resetDemoBtn">
                     <i data-lucide="rotate-ccw"></i>
-                    <span>Reset Demo State</span>
+                    <span>Сбросить настройки</span>
                   </button>
                 </div>
               </div>
