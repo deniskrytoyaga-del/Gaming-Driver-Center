@@ -53,7 +53,8 @@ def build_payload(raw):
         hw("Graphics Card","monitor",x.get("Name"),"Windows device inventory",x.get("DriverVersion"),[("Video processor",x.get("VideoProcessor")),("Dedicated memory",f"{round((x.get('AdapterRAM') or 0)/(1024**3),1)} GB" if x.get("AdapterRAM") else None)])
     hw("Processor","cpu",c.get("Name"),"Windows device inventory",None,[("Cores",c.get("NumberOfCores")),("Threads",c.get("NumberOfLogicalProcessors")),("Max clock (MHz)",c.get("MaxClockSpeed"))])
     hw("Motherboard","circuit-board"," ".join(str(x) for x in [b.get("Manufacturer"),b.get("Product")] if x),"Windows device inventory",None,[("Version",b.get("Version"))])
-    hw("Memory","memory-stick",f"{ram_gb} GB RAM" if ram_gb else "Installed memory","Windows device inventory",None,[("Modules",len(ram)),("Reported speed",", ".join(str(x.get("Speed")) for x in ram if x.get("Speed"))+" MT/s")])
+    if ram and total_ram > 0:
+        hw("Memory","memory-stick",f"{ram_gb} GB RAM","Windows device inventory",None,[("Modules",len(ram)),("Reported speed",", ".join(str(x.get("Speed")) for x in ram if x.get("Speed"))+" MT/s")])
     for x in disks:
         hw("Storage","hard-drive",x.get("Model"),x.get("MediaType"),None,[("Capacity",f"{round((x.get('Size') or 0)/(1024**3),1)} GB" if x.get("Size") else None),("Interface",x.get("InterfaceType"))])
     for x in network:
