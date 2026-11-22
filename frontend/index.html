@@ -73,6 +73,7 @@
             <span class="nav-label">DRIVERS</span>
             <span class="nav-badge" id="navDriversBadge">6</span>
           </button>
+          <button class="nav-item" data-page="catalog"><i data-lucide="package-search"></i><span class="nav-label">КАТАЛОГ</span></button>
           <button class="nav-item" data-page="updates">
             <i data-lucide="download-cloud"></i>
             <span class="nav-label">UPDATES</span>
@@ -270,6 +271,19 @@
           </div>
         </section>
 
+
+        <section class="page" id="page-catalog" aria-labelledby="catalogHeading">
+          <div class="page-header"><div><h1 class="page-title" id="catalogHeading">Каталог программ и компонентов</h1><p class="page-subtitle">Поиск, проверка установки и установка из приложения через Windows Package Manager.</p></div></div>
+          <div class="card-surface" style="padding:18px;margin-bottom:16px;">
+            <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
+              <div class="search-box" style="flex:1;min-width:230px;"><i data-lucide="search"></i><input id="catalogSearch" type="search" placeholder="Найти программу, компонент или издателя…" aria-label="Поиск в каталоге"></div>
+              <select id="catalogCategory" class="ui-select" aria-label="Категория"><option value="all">Все категории</option><option value="runtime">Компоненты Windows</option><option value="utility">Полезные программы</option><option value="gaming">Игровые компоненты</option></select>
+              <button class="btn-secondary" id="catalogRefreshBtn"><i data-lucide="refresh-cw"></i> ОБНОВИТЬ СПИСОК</button>
+            </div>
+            <div id="catalogStatus" style="margin-top:12px;color:var(--text-secondary);">Загружаю каталог…</div>
+          </div>
+          <div id="catalogGrid" class="optimization-grid"></div>
+        </section>
         <!-- ==================== 4. UPDATES ==================== -->
         <section class="page" id="page-updates" aria-labelledby="updHeading">
           <div class="page-header">
@@ -584,7 +598,6 @@
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
   <script src="script.js"></script>
-  <script src="official-drivers.js"></script>
-  <script src="drivers.js"></script>
+  <script src="catalog.js"></script>
 </body>
 </html>
