@@ -1,6 +1,6 @@
 /**
  * GAMING DRIVER CENTER (GDC) — FRONTEND APPLICATION CONTROLLER
- * Pure Frontend UI Layer with structured Demo Data & Backend Bridge Hooks.
+ * Frontend controller connected to the local Windows backend.
  */
 
 (function () {
@@ -10,7 +10,7 @@
      1. STRUCTURED DEMO STATE & BACKEND ADAPTER INTERFACE
      ======================================================================== */
 
-  const INITIAL_DEMO_STATE = {
+  const INITIAL_APP_STATE = {
     activePage: 'dashboard',
     sidebarCollapsed: false,
     driverFilter: 'All',
@@ -50,10 +50,10 @@
       const badge = document.getElementById('backendBridgeBadge');
       const statusText = document.getElementById('engineStatusText');
       if (badge) {
-        badge.textContent = connected ? 'Connected (Python IPC)' : 'Disconnected (Demo Mode)';
+        badge.textContent = connected ? 'Подключено к Windows' : 'Нет подключения к Windows';
         badge.style.color = connected ? 'var(--success)' : 'var(--warning)';
       }
-      if (statusText) statusText.textContent = connected ? 'Service Connected' : 'UI Ready • Demo Data';
+      if (statusText) statusText.textContent = connected ? 'Служба Windows подключена' : 'Нет подключения';
     },
     loadExternalData: (payload) => {
       if (payload && typeof payload === 'object') {
@@ -165,7 +165,6 @@
     }
     const checked = appState.driverUpdatesChecked === true;
     const remainingUpdates = Number(appState.pendingDriverUpdates || 0);
-    const score = checked ? (remainingUpdates === 0 ? 100 : remainingUpdates === 1 ? 93 : 86) : 0;
     const scoreEl = document.getElementById('healthScoreValue');
     const captionEl = document.getElementById('healthScoreLabel');
     const circleEl = document.getElementById('healthCircle');
@@ -174,16 +173,16 @@
     const stateEl = document.getElementById('healthDriverState');
     const countEl = document.getElementById('healthUpdatesCount');
     const lastCheckEl = document.getElementById('healthLastCheck');
-    if (scoreEl) scoreEl.textContent = checked ? `${score}%` : '—';
-    if (captionEl) captionEl.textContent = checked ? (remainingUpdates === 0 ? 'PEAK READY' : 'NEEDS REVIEW') : 'NOT CHECKED';
-    if (circleEl) circleEl.style.strokeDashoffset = (414.69 - (score / 100) * 414.69).toFixed(2);
-    if (titleEl) titleEl.textContent = !checked ? 'Driver status not checked' : (remainingUpdates === 0 ? 'No pending updates reported' : `${remainingUpdates} Driver Update${remainingUpdates > 1 ? 's' : ''} Found`);
-    if (descEl) descEl.textContent = !checked ? 'Open Drivers and press CHECK to look for compatible Windows Update packages.' : (remainingUpdates === 0 ? 'Windows Update did not offer compatible driver updates.' : 'Compatible driver updates are available for review.');
+    if (scoreEl) scoreEl.textContent = checked ? String(remainingUpdates) : '—';
+    if (captionEl) captionEl.textContent = checked ? 'ОБНОВЛЕНИЙ' : 'НЕ ПРОВЕРЕНО';
+    if (circleEl) circleEl.style.strokeDashoffset = '414.69';
+    if (titleEl) titleEl.textContent = !checked ? 'Драйверы ещё не проверялись' : (remainingUpdates === 0 ? 'Windows Update не предложил обновлений драйверов' : 'Доступно обновлений драйверов: ' + remainingUpdates);
+    if (descEl) descEl.textContent = !checked ? 'Открой раздел «Драйверы» и нажми «Проверить», чтобы запросить совместимые обновления у Windows Update.' : (remainingUpdates === 0 ? 'Проверка Windows Update завершена. Новые совместимые драйверы не предложены.' : 'Windows Update нашёл пакеты драйверов для этого компьютера. Перед установкой проверь их список.');
     if (stateEl) {
-      stateEl.textContent = !checked ? 'Not checked' : (remainingUpdates === 0 ? 'No updates offered' : 'Action Recommended');
+      stateEl.textContent = !checked ? 'Не проверено' : (remainingUpdates === 0 ? 'Обновления не предложены' : 'Есть обновления');
       stateEl.className = `metric-value ${!checked ? '' : (remainingUpdates === 0 ? 'status-ok-text' : 'status-warn-text')}`;
     }
-    if (countEl) countEl.textContent = checked ? `${remainingUpdates} Package${remainingUpdates === 1 ? '' : 's'}` : 'Not checked';
+    if (countEl) countEl.textContent = checked ? String(remainingUpdates) : 'Не проверено';
     if (lastCheckEl) lastCheckEl.textContent = appState.lastCheckLabel;
     const actList = document.getElementById('dashboardActivityList');
     if (actList) {
@@ -200,6 +199,12 @@
     const check = document.getElementById('checkOfficialDriversBtn');
     if (action) action.addEventListener('click', runOneClickDriverUpdate);
     if (check) check.addEventListener('click', checkOfficialDrivers);
+    const links = document.getElementById('officialVendorLinks');
+    if (links) {
+      links.innerHTML =
+        '<a class="btn-secondary btn-sm" href="https://digma.ru/support/download/" target="_blank" rel="noopener noreferrer">Официальные драйверы DIGMA</a>' +
+        '<a class="btn-secondary btn-sm" href="https://www.amd.com/en/support/download/drivers.html" target="_blank" rel="noopener noreferrer">Официальные драйверы AMD</a>';
+    }
   }
   function setOfficialStatus(message, error = false) {
     const el = document.getElementById('officialDriverStatus');
@@ -362,7 +367,9 @@
       document.querySelectorAll('#accentSelector .seg-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.accent===appState.settings.accent));
       const glass=document.getElementById('toggleGlass'); if(glass) glass.checked=appState.settings.glass!==false;
       const lang=document.getElementById('languageSelect'); if(lang) lang.value=appState.settings.language||'ru';
-      const toast=document.getElementById('toggleToasts'); if(toast) toast.checked=appState.settings.toasts!==false;\n      const startup=document.getElementById('toggleStartup'); if(startup) startup.checked=!!saved.startupLaunch;\n      fetch('/api/optimization',{cache:'no-store'}).then(r=>r.json()).then(v=>{const el=document.getElementById('toggleStartup');if(v.ok&&el)el.checked=!!v.data.startup;}).catch(()=>{});
+      const toast=document.getElementById('toggleToasts'); if(toast) toast.checked=appState.settings.toasts!==false;
+      const startup=document.getElementById('toggleStartup'); if(startup) startup.checked=!!saved.startupLaunch;
+      fetch('/api/optimization',{cache:'no-store'}).then(r=>r.json()).then(v=>{const el=document.getElementById('toggleStartup');if(v.ok&&el)el.checked=!!v.data.startup;}).catch(()=>{});
     } catch (_) {}
   }
   function bindSettingsControls() {
@@ -392,7 +399,7 @@
     });
     const reset=document.getElementById('resetDemoBtn');
     if(reset) reset.addEventListener('click',async()=>{
-      appState.settings={accent:'violet',glass:true,language:'ru',toasts:true};
+      appState.settings={accent:'violet',glass:true,language:'ru',toasts:true,startupLaunch:!!appState.settings.startupLaunch};
       document.body.classList.remove('theme-cyan','no-glass');
       await persistSettings(); await loadSettings();
       showToast('Настройки сброшены','Восстановлены стандартные настройки приложения.','success');

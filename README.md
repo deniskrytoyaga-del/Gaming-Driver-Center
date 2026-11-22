@@ -1,37 +1,46 @@
 # Gaming Driver Center
 
-Windows x64 desktop utility for hardware and driver inventory, with a cautious software prerequisite catalogue.
+Локальное приложение Windows для инвентаризации оборудования, просмотра установленных драйверов и установки распространённых компонентов из официальных источников.
 
-## Current capabilities
-- Local desktop app (pywebview + Flask bound to 127.0.0.1).
-- Read-only Windows CIM hardware and Plug-and-Play driver inventory.
-- Driver updates discovered from Microsoft Windows Update only; vendor catalogue comparisons are not yet implemented.
-- Software catalogue detects a small curated set of packages through winget. It does not install anything yet.
-- Settings are stored separately in %APPDATA%\\GamingDriverCenter.
-- Windows installer uses PyInstaller onedir + Inno Setup; app files live under Program Files.
+## Что делает приложение
 
-## Important limitations
-A missing catalogue entry is not proof that a component is required. DirectX legacy runtime is intentionally not offered as a blanket recommendation. Driver signature metadata and latest vendor versions are not yet fully verified for every device. The app must not label an unchecked driver as up to date.
+- Считывает реальные сведения об оборудовании и Plug-and-Play драйверах через Windows CIM.
+- Показывает установленные драйверы устройств; это инвентаризация, а не список обновлений.
+- Проверяет обновления драйверов через Microsoft Windows Update. Наличие обновления определяется только тем, что Windows Update предлагает этому ПК.
+- Каталог программ определяет установленное ПО по разделам удаления Windows (HKLM 64-bit, WOW6432Node и HKCU).
+- Каталог скачивает установщики с заданных официальных доменов, проверяет цифровую подпись Authenticode и ожидаемого издателя, считает SHA-256 и запускает обычный интерактивный установщик.
+- Установка не запускается без отдельного подтверждения в приложении; дальнейшие действия происходят в штатном окне установщика.
+- Оптимизация содержит только две обратимые операции: переключение Game Mode текущего пользователя и очистка временной папки текущего пользователя.
+- Настройка автозапуска меняет Run-ключ текущего пользователя.
+- Настройки хранятся в %APPDATA%\\GamingDriverCenter.
 
-No driver or software is installed automatically. Driver installation is a separate Windows Update operation and should only be started after the user reviews it. Ask an adult before installing system drivers or software.
+## Важно
 
-## Build locally
-Requires 64-bit Windows 10/11 and Python 3.12.
+Каталог содержит распространённые компоненты и несколько программ, а не абсолютно все приложения Windows. Не нужно устанавливать всё подряд. VC++ и .NET нужны только тем играм и программам, которые от них зависят. .NET 10 — текущая поддерживаемая LTS-линия; старые runtime не предлагаются как универсальная необходимость.
+
+Драйверы ноутбука зависят от точной модели и OEM-настроек. Для ноутбуков Digma сначала используй Windows Update и официальный пакет производителя для точной модели. Intel Driver & Support Assistant относится только к устройствам Intel и не должен подменять драйверы AMD или Digma. Не устанавливай драйверы от другого производителя/модели «на всякий случай».
+
+Автоматическая проверка последней версии для каждой программы пока не реализована. Каталог честно показывает установленную версию из Windows, но не заявляет, что она последняя. Для браузеров и постоянно обновляемых установщиков используются официальные каналы загрузки производителя.
+
+## Разработка и тесты
+
+Требуются Windows 10/11 x64 и Python 3.12.
 
 ```powershell
 py -3.12 -m venv .venv
-.\.venv\Scripts\Activate.ps1
+.\\.venv\\Scripts\\Activate.ps1
 python -m pip install -r requirements.txt
 python -m unittest discover -s tests -v
 python app.py
 ```
 
-## Installer
-GitHub Actions builds `GamingDriverCenter-Setup.exe` after tests pass. The installer creates Start Menu and optional desktop shortcuts. User settings are stored outside the install directory and survive app updates.
+GitHub Actions запускает backend-тесты и проверку синтаксиса JavaScript, затем собирает приложение через PyInstaller и Inno Setup.
 
-## Project layout
-- `frontend/`: UI
-- `backend/system_info.py`: read-only hardware and driver inventory
-- `backend/driver_updates.py`: Microsoft Windows Update driver discovery
-- `backend/software_catalog.py`: curated software/runtime detection
-- `installer/GDC.iss`: Inno Setup definition
+## Структура
+
+- `frontend/` — интерфейс
+- `backend/system_info.py` — инвентаризация оборудования и драйверов
+- `backend/driver_updates.py` — обновления драйверов через Windows Update
+- `backend/software_catalog.py` — каталог и проверка подписанных официальных установщиков
+- `backend/optimization.py` — реальные системные переключатели
+- `installer/GDC.iss` — установщик Windows
