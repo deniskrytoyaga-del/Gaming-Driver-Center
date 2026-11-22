@@ -394,7 +394,7 @@
     });
     const reset=document.getElementById('resetDemoBtn');
     if(reset) reset.addEventListener('click',async()=>{
-      appState.settings={accent:'violet',glass:true,language:'ru',toasts:true};
+      appState.settings={accent:'violet',glass:true,language:'ru',toasts:true,startupLaunch:!!appState.settings.startupLaunch};
       document.body.classList.remove('theme-cyan','no-glass');
       await persistSettings(); await loadSettings();
       showToast('Настройки сброшены','Восстановлены стандартные настройки приложения.','success');
