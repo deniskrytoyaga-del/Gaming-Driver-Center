@@ -70,7 +70,6 @@
     bindScanButtons();
     bindDriverFilters();
     bindOfficialDriverCenter();
-    bindHistoryFilters();
     bindSettingsControls();
     bindModalControls();
     renderAll();
@@ -139,9 +138,6 @@
     renderDashboard();
     renderHardware();
     renderDrivers();
-    renderUpdates();
-    renderOptimization();
-    renderHistory();
     updateNavBadges();
     refreshIcons();
   }
@@ -342,134 +338,6 @@
       const drv=appState.drivers.find(x=>x.id===btn.getAttribute('data-drv-details'));
       if(drv) openDriverModal(drv);
     }));
-  }
-
-  function handleDriverInstallTrigger(drv) {
-    const existingUpdate = appState.updates.find((u) => u.driverId === drv.id);
-    if (existingUpdate && existingUpdate.state !== 'completed') {
-      switchPage('updates');
-      simulateUpdateProgress(existingUpdate.id);
-      return;
-    }
-    const newUpd = { id: `upd-${drv.id}-${Date.now()}`, driverId: drv.id, name: `${drv.device} Package`, version: drv.latestVersion === '—' ? drv.currentVersion : drv.latestVersion, size: drv.size, releaseDate: drv.releaseDate, selected: true, state: 'ready', progress: 0 };
-    appState.updates.unshift(newUpd);
-    switchPage('updates');
-    renderUpdates();
-    refreshIcons();
-    simulateUpdateProgress(newUpd.id);
-  }
-
-  function bindUpdateBulkActions() {
-    const selBtn = document.getElementById('updateSelectedBtn');
-    const allBtn = document.getElementById('updateAllBtn');
-    if (selBtn) selBtn.addEventListener('click', () => {
-      const selected = appState.updates.filter((u) => u.selected && u.state === 'ready');
-      if (selected.length === 0) { showToast('No Packages Selected', 'Select at least one ready update package first.', 'warning'); return; }
-      selected.forEach((u) => simulateUpdateProgress(u.id));
-    });
-    if (allBtn) allBtn.addEventListener('click', () => {
-      const readyList = appState.updates.filter((u) => u.state === 'ready');
-      if (readyList.length === 0) { showToast('Queue Clear', 'No pending updates remain in the demo queue.', 'info'); return; }
-      readyList.forEach((u) => simulateUpdateProgress(u.id));
-    });
-  }
-
-  function renderUpdates() {
-    const list = document.getElementById('updatesList');
-    const bigNum = document.getElementById('updatesAvailableBig');
-    const heroTitle = document.getElementById('updatesHeroTitle');
-    const heroSub = document.getElementById('updatesHeroSubtitle');
-    const pendingCount = appState.updates.filter((u) => u.state !== 'completed').length;
-    if (bigNum) bigNum.textContent = pendingCount;
-    if (heroTitle && heroSub) {
-      if (pendingCount === 0) { heroTitle.textContent = 'No verified updates listed'; heroSub.textContent = 'Run CHECK DRIVERS to check updates offered for this PC.'; }
-      else { heroTitle.textContent = `${pendingCount} Driver Update Package${pendingCount > 1 ? 's' : ''} Available`; heroSub.textContent = 'Select individual packages or deploy all queued updates simultaneously.'; }
-    }
-    if (!list) return;
-    if (appState.updates.length === 0) {
-      list.innerHTML = `<div class="empty-state-card card-surface"><div class="empty-state-icon"><i data-lucide="check-circle-2"></i></div><h3>No Verified Updates</h3><p style="color: var(--text-secondary);">No verified updates are listed. Run CHECK DRIVERS to search Windows Update.</p></div>`;
-      return;
-    }
-    list.innerHTML = appState.updates.map((upd) => {
-      const isBusy = upd.state === 'downloading' || upd.state === 'installing';
-      const isDone = upd.state === 'completed';
-      let stageLabel = 'Ready to download';
-      if (upd.state === 'downloading') stageLabel = 'Downloading package (UI Preview)...';
-      if (upd.state === 'installing') stageLabel = 'Applying driver configuration (UI Preview)...';
-      if (isDone) stageLabel = 'Installed (Demo State)';
-      return `<article class="update-item-card card-surface"><div class="update-item-top"><div class="update-item-left"><input type="checkbox" class="custom-checkbox" data-upd-check="${escapeHtml(upd.id)}" ${upd.selected ? 'checked' : ''} ${isBusy || isDone ? 'disabled' : ''} aria-label="Select ${escapeHtml(upd.name)}" /><div><div class="driver-device-name">${escapeHtml(upd.name)}</div><div class="update-meta-row"><span class="update-meta-chip"><i data-lucide="tag"></i> v${escapeHtml(upd.version)}</span><span class="update-meta-chip"><i data-lucide="hard-drive"></i> ${escapeHtml(upd.size)}</span><span class="update-meta-chip"><i data-lucide="calendar"></i> ${escapeHtml(upd.releaseDate)}</span></div></div></div><div>${isDone ? '<span class="status-pill status-up-to-date">INSTALLED</span>' : `<button class="btn-primary btn-sm" data-upd-install="${escapeHtml(upd.id)}" ${isBusy ? 'disabled' : ''}><i data-lucide="${isBusy ? 'loader-2' : 'download'}"></i><span>${isBusy ? 'Processing...' : 'Install Update'}</span></button>`}</div></div>
-      ${isBusy || isDone ? `<div class="update-progress-wrap"><div class="progress-header"><span class="progress-stage">${stageLabel}</span><span class="progress-pct">${upd.progress}%</span></div><div class="progress-track"><div class="progress-fill" style="width: ${upd.progress}%;"></div></div></div>` : ''}</article>`;
-    }).join('');
-    list.querySelectorAll('[data-upd-check]').forEach((cb) => cb.addEventListener('change', () => {
-      const upd = appState.updates.find((u) => u.id === cb.getAttribute('data-upd-check'));
-      if (upd) upd.selected = cb.checked;
-    }));
-    list.querySelectorAll('[data-upd-install]').forEach((btn) => btn.addEventListener('click', () => simulateUpdateProgress(btn.getAttribute('data-upd-install'))));
-  }
-
-  function simulateUpdateProgress(updateId) {
-    const upd = appState.updates.find((u) => u.id === updateId);
-    if (!upd || upd.state !== 'ready') return;
-    upd.state = 'downloading';
-    upd.progress = 8;
-    renderUpdates();
-    refreshIcons();
-    const timer = setInterval(() => {
-      if (upd.progress < 60) upd.progress += 14;
-      else if (upd.progress < 95) { upd.state = 'installing'; upd.progress += 12; }
-      else {
-        upd.progress = 100;
-        upd.state = 'completed';
-        clearInterval(timer);
-        const drv = appState.drivers.find((d) => d.id === upd.driverId);
-        if (drv) { drv.currentVersion = drv.latestVersion !== '—' ? drv.latestVersion : drv.currentVersion; drv.status = 'UP TO DATE'; }
-        const pendingLeft = appState.updates.filter((u) => u.state !== 'completed').length;
-        const drvOverview = appState.overview.find((o) => o.id === 'drivers');
-        if (drvOverview) {
-          drvOverview.main = `${6 - pendingLeft} / 6 Packages Current`;
-          drvOverview.sub = pendingLeft === 0 ? 'Demo • All Packages Up To Date' : `Demo • ${pendingLeft} Recommended Update`;
-        }
-        appState.history.unshift({ id: `h-${Date.now()}`, type: 'install', title: `${upd.name} Installed (Demo)`, description: `Simulated deployment of v${upd.version} completed successfully.`, time: 'Just now', badge: 'INSTALLED' });
-        renderAll();
-        showToast('Update Preview Complete', `${upd.name} marked as up to date.`, 'success');
-        return;
-      }
-      renderUpdates();
-      refreshIcons();
-    }, 260);
-  }
-
-  function renderOptimization() {
-    const grid = document.getElementById('optimizationGrid');
-    const chip = document.getElementById('optActiveCountChip');
-    if (!grid) return;
-    const optimalCount = appState.optimizations.filter((o) => o.optimal).length;
-    if (chip) chip.innerHTML = `<i data-lucide="zap"></i> ${optimalCount} / ${appState.optimizations.length} Profiles Optimal`;
-    grid.innerHTML = appState.optimizations.map((opt) => `
-      <article class="opt-card card-surface"><div><div class="opt-top"><div class="opt-icon"><i data-lucide="${opt.icon}"></i></div><span class="status-pill ${opt.optimal ? 'status-up-to-date' : 'status-unknown'}">${escapeHtml(opt.status)}</span></div><h3 class="opt-title">${escapeHtml(opt.title)}</h3><p class="opt-desc">${escapeHtml(opt.description)}</p></div>
-      <div class="opt-footer"><span class="opt-impact">${escapeHtml(opt.impact)}</span><button class="btn-secondary btn-sm" data-opt-details="${escapeHtml(opt.id)}">Details</button></div></article>`).join('');
-    grid.querySelectorAll('[data-opt-details]').forEach((btn) => btn.addEventListener('click', () => {
-      const opt = appState.optimizations.find((o) => o.id === btn.getAttribute('data-opt-details'));
-      if (opt) openOptimizationModal(opt);
-    }));
-  }
-
-  function bindHistoryFilters() {
-    document.querySelectorAll('#historyFilterBar .filter-tab').forEach((tab) => tab.addEventListener('click', () => {
-      document.querySelectorAll('#historyFilterBar .filter-tab').forEach((t) => t.classList.remove('active'));
-      tab.classList.add('active');
-      appState.historyFilter = tab.getAttribute('data-history-type');
-      renderHistory();
-    }));
-  }
-
-  function renderHistory() {
-    const container = document.getElementById('historyTimeline');
-    if (!container) return;
-    const filtered = appState.history.filter((item) => appState.historyFilter === 'all' || item.type === appState.historyFilter);
-    container.innerHTML = `<div class="timeline-list">${filtered.map((ev) => `
-      <div class="timeline-item type-${escapeHtml(ev.type)}"><span class="timeline-dot"></span><div class="timeline-content"><h4>${escapeHtml(ev.title)}</h4><p>${escapeHtml(ev.description)}</p></div>
-      <div class="timeline-meta"><span class="status-pill ${ev.type === 'error' ? 'status-not-found' : ev.type === 'install' ? 'status-up-to-date' : 'status-update-available'}">${escapeHtml(ev.badge)}</span><span class="timeline-time">${escapeHtml(ev.time)}</span></div></div>`).join('')}</div>`;
   }
 
   async function persistSettings() {
