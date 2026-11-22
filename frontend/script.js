@@ -362,7 +362,9 @@
       document.querySelectorAll('#accentSelector .seg-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.accent===appState.settings.accent));
       const glass=document.getElementById('toggleGlass'); if(glass) glass.checked=appState.settings.glass!==false;
       const lang=document.getElementById('languageSelect'); if(lang) lang.value=appState.settings.language||'ru';
-      const toast=document.getElementById('toggleToasts'); if(toast) toast.checked=appState.settings.toasts!==false;\n      const startup=document.getElementById('toggleStartup'); if(startup) startup.checked=!!saved.startupLaunch;\n      fetch('/api/optimization',{cache:'no-store'}).then(r=>r.json()).then(v=>{const el=document.getElementById('toggleStartup');if(v.ok&&el)el.checked=!!v.data.startup;}).catch(()=>{});
+      const toast=document.getElementById('toggleToasts'); if(toast) toast.checked=appState.settings.toasts!==false;
+      const startup=document.getElementById('toggleStartup'); if(startup) startup.checked=!!saved.startupLaunch;
+      fetch('/api/optimization',{cache:'no-store'}).then(r=>r.json()).then(v=>{const el=document.getElementById('toggleStartup');if(v.ok&&el)el.checked=!!v.data.startup;}).catch(()=>{});
     } catch (_) {}
   }
   function bindSettingsControls() {
