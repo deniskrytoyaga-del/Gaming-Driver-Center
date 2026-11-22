@@ -54,7 +54,7 @@ for ($i = 0; $i -lt $updates.Count; $i++) {
 [pscustomobject]@{ found = $updates.Count; items = $items } | ConvertTo-Json -Depth 5 -Compress
 """
 
-    script = r"""
+    script = "$action = '" + action + "'\n" + r"""
 $ErrorActionPreference = 'Stop'
 $session = New-Object -ComObject Microsoft.Update.Session
 $searcher = $session.CreateUpdateSearcher()
