@@ -199,6 +199,12 @@
     const check = document.getElementById('checkOfficialDriversBtn');
     if (action) action.addEventListener('click', runOneClickDriverUpdate);
     if (check) check.addEventListener('click', checkOfficialDrivers);
+    const links = document.getElementById('officialVendorLinks');
+    if (links) {
+      links.innerHTML =
+        '<a class="btn-secondary btn-sm" href="https://digma.ru/support/download/" target="_blank" rel="noopener noreferrer">Официальные драйверы DIGMA</a>' +
+        '<a class="btn-secondary btn-sm" href="https://www.amd.com/en/support/download/drivers.html" target="_blank" rel="noopener noreferrer">Официальные драйверы AMD</a>';
+    }
   }
   function setOfficialStatus(message, error = false) {
     const el = document.getElementById('officialDriverStatus');
