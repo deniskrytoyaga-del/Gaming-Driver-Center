@@ -163,8 +163,9 @@
           <div class="overview-sub" title="${escapeHtml(item.sub)}">${escapeHtml(item.sub)}</div>
         </article>`).join('');
     }
-    const remainingUpdates = appState.updates.filter((u) => u.state !== 'completed').length;
-    const score = remainingUpdates === 0 ? 100 : remainingUpdates === 1 ? 93 : 86;
+    const checked = appState.driverUpdatesChecked === true;
+    const remainingUpdates = Number(appState.pendingDriverUpdates || 0);
+    const score = checked ? (remainingUpdates === 0 ? 100 : remainingUpdates === 1 ? 93 : 86) : 0;
     const scoreEl = document.getElementById('healthScoreValue');
     const captionEl = document.getElementById('healthScoreLabel');
     const circleEl = document.getElementById('healthCircle');
@@ -173,16 +174,16 @@
     const stateEl = document.getElementById('healthDriverState');
     const countEl = document.getElementById('healthUpdatesCount');
     const lastCheckEl = document.getElementById('healthLastCheck');
-    if (scoreEl) scoreEl.textContent = `${score}%`;
-    if (captionEl) captionEl.textContent = remainingUpdates === 0 ? 'PEAK READY' : 'OPTIMAL';
+    if (scoreEl) scoreEl.textContent = checked ? `${score}%` : '—';
+    if (captionEl) captionEl.textContent = checked ? (remainingUpdates === 0 ? 'PEAK READY' : 'NEEDS REVIEW') : 'NOT CHECKED';
     if (circleEl) circleEl.style.strokeDashoffset = (414.69 - (score / 100) * 414.69).toFixed(2);
-    if (titleEl) titleEl.textContent = appState.updates.length === 0 ? 'Driver status not checked' : (remainingUpdates === 0 ? 'No pending updates reported' : `${remainingUpdates} Driver Update${remainingUpdates > 1 ? 's' : ''} Found`);
-    if (descEl) descEl.textContent = appState.updates.length === 0 ? 'Run CHECK DRIVERS to look for compatible updates from Windows Update.' : (remainingUpdates === 0 ? 'No pending driver updates are currently listed.' : 'Compatible driver updates are available for review.');
+    if (titleEl) titleEl.textContent = !checked ? 'Driver status not checked' : (remainingUpdates === 0 ? 'No pending updates reported' : `${remainingUpdates} Driver Update${remainingUpdates > 1 ? 's' : ''} Found`);
+    if (descEl) descEl.textContent = !checked ? 'Open Drivers and press CHECK to look for compatible Windows Update packages.' : (remainingUpdates === 0 ? 'Windows Update did not offer compatible driver updates.' : 'Compatible driver updates are available for review.');
     if (stateEl) {
-      stateEl.textContent = remainingUpdates === 0 ? 'All Up To Date' : 'Action Recommended';
-      stateEl.className = `metric-value ${remainingUpdates === 0 ? 'status-ok-text' : 'status-warn-text'}`;
+      stateEl.textContent = !checked ? 'Not checked' : (remainingUpdates === 0 ? 'No updates offered' : 'Action Recommended');
+      stateEl.className = `metric-value ${!checked ? '' : (remainingUpdates === 0 ? 'status-ok-text' : 'status-warn-text')}`;
     }
-    if (countEl) countEl.textContent = `${remainingUpdates} Package${remainingUpdates === 1 ? '' : 's'}`;
+    if (countEl) countEl.textContent = checked ? `${remainingUpdates} Package${remainingUpdates === 1 ? '' : 's'}` : 'Not checked';
     if (lastCheckEl) lastCheckEl.textContent = appState.lastCheckLabel;
     const actList = document.getElementById('dashboardActivityList');
     if (actList) {
@@ -219,6 +220,9 @@
       const response = await fetch('/api/driver-updates', {cache:'no-store'}); const result = await response.json();
       if (!response.ok || !result.ok) throw new Error(result.error || 'Не удалось проверить обновления');
       const items = result.data.items || []; renderOfficialDriverResults(items);
+      appState.driverUpdatesChecked = true;
+      appState.pendingDriverUpdates = items.length;
+      renderDashboard();
       setOfficialStatus(items.length ? 'Найдено обновлений: ' + items.length + '. Нажми «НАЙТИ И УСТАНОВИТЬ», чтобы загрузить и установить их.' : 'Проверка завершена: подходящих обновлений драйверов нет.');
       if (action) action.disabled = items.length === 0;
       appState.lastCheckLabel = new Date().toLocaleString('ru-RU');
@@ -320,7 +324,7 @@
     const value=(drv.category+' '+drv.device+' '+drv.vendor).toLowerCase();
     if(/display|video|graphics|radeon|geforce|nvidia|intel.*(graphics|arc)/.test(value)) return 'Graphics';
     if(/system|chipset|processor|smbus|pci/.test(value)) return 'Chipset';
-    if(/audio|sound/.test(value)) return 'Audio';
+    if(/audio|sound|media/.test(value)) return 'Audio';
     if(/net|wireless|wi.?fi|ethernet|bluetooth/.test(value)) return 'Network';
     return 'Other';
   }
