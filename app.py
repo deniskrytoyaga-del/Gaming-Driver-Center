@@ -33,7 +33,7 @@ def index():
 
 @app.get("/api/health")
 def health():
-    return jsonify({"ok": True, "mode": "local-read-only", "version": "0.2.0"})
+    return jsonify({"ok": True, "mode": "local-read-only", "version": "0.4.0"})
 
 @app.get("/api/software-catalog")
 def software_catalog():
