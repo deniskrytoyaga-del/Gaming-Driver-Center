@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -79,7 +79,7 @@
             <span class="nav-label">UPDATES</span>
             <span class="nav-badge nav-badge-accent" id="navUpdatesBadge">2</span>
           </button>
-          <button class="nav-item" data-page="optimization" style="display:none">
+          <button class="nav-item" data-page="optimization">
             <i data-lucide="gauge"></i>
             <span class="nav-label">OPTIMIZATION</span>
           </button>
@@ -272,7 +272,16 @@
         </section>
 
 
-        <section class="page" id="page-catalog" aria-labelledby="catalogHeading">
+
+        <section class="page" id="page-optimization" aria-labelledby="optimizationHeading">
+          <div class="page-header"><div><h1 class="page-title" id="optimizationHeading">Оптимизация Windows</h1><p class="page-subtitle">Только реальные и обратимые действия. Никаких фальшивых «ускорителей» и отключения системной защиты.</p></div></div>
+          <div class="optimization-grid">
+            <article class="opt-card card-surface"><div><div class="opt-top"><div class="opt-icon"><i data-lucide="gamepad-2"></i></div><span class="status-pill status-unknown" id="gameModeStatus">Проверка…</span></div><h3 class="opt-title">Игровой режим Windows</h3><p class="opt-desc">Показывает и переключает встроенный игровой режим Windows. Сам по себе не гарантирует прирост FPS.</p></div><div class="opt-footer"><span class="opt-impact">Системная настройка</span><button class="btn-primary btn-sm" id="toggleGameModeBtn">Загрузка…</button></div></article>
+            <article class="opt-card card-surface"><div><div class="opt-top"><div class="opt-icon"><i data-lucide="trash-2"></i></div><span class="status-pill status-up-to-date">Безопасная очистка</span></div><h3 class="opt-title">Очистить временные файлы</h3><p class="opt-desc">Удаляет содержимое временной папки текущего пользователя. Занятые и недоступные файлы пропускаются. Не трогает загрузки, документы и игры.</p></div><div class="opt-footer"><span class="opt-impact">Освобождение места</span><button class="btn-secondary btn-sm" id="cleanTempBtn">Очистить</button></div></article>
+          </div>
+          <div class="card-surface" id="optimizationStatus" style="padding:16px;margin-top:18px;color:var(--text-secondary);">Получаю реальные параметры Windows…</div>
+        </section>
+\n        <section class="page" id="page-catalog" aria-labelledby="catalogHeading">
           <div class="page-header"><div><h1 class="page-title" id="catalogHeading">Каталог программ и компонентов</h1><p class="page-subtitle">Поиск, проверка установки и установка из приложения через Windows Package Manager.</p></div></div>
           <div class="card-surface" style="padding:18px;margin-bottom:16px;">
             <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center;">
@@ -438,6 +447,6 @@
   <div class="toast-container" id="toastContainer" aria-live="polite"></div>
 
   <script src="script.js"></script>
-  <script src="catalog.js"></script>
+  <script src="catalog.js"></script>\n  <script src="optimization.js"></script>
 </body>
 </html>
