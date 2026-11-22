@@ -24,7 +24,7 @@ for ($i = 0; $i -lt $updates.Count; $i++) {
   $r = $installResult.GetUpdateResult($i)
   $items += [pscustomobject]@{
     title = $u.Title
-    hresult = ('0x{0:X8}' -f ($r.HResult -band 0xffffffffL))
+    hresult = ('0x{0:X8}' -f $r.HResult)
     resultCode = [int]$r.ResultCode
     rebootRequired = [bool]$r.RebootRequired
   }
