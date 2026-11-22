@@ -62,7 +62,7 @@ $result = $searcher.Search("IsInstalled=0 and IsHidden=0 and Type='Driver'")
 $updates = New-Object -ComObject Microsoft.Update.UpdateColl
 for ($i = 0; $i -lt $result.Updates.Count; $i++) {
   $u = $result.Updates.Item($i)
-  if (-not $u.IsInstalled -and -not $u.IsHidden) { [void]$updates.Add($u) }
+  if (-not $u.IsInstalled -and -not $u.IsHidden) { if ($action -eq 'install' -and -not $u.EulaAccepted) { [void]$u.AcceptEula() }; [void]$updates.Add($u) }
 }
 """ + install_block
 
