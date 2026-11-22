@@ -107,7 +107,7 @@
     installBtn.disabled = true;
     setStatus('Downloading and installing official driver updates. This may take several minutes…');
     try {
-      const response = await fetch('/api/driver-updates/install-all', { method: 'POST' });
+      const response = await fetch('/api/driver-updates/install-all', { method: 'POST', headers: { 'X-GDC-Confirm': '1' } });
       const payload = await response.json();
       if (!response.ok || !payload.ok) throw new Error(payload.error || 'Driver installation failed');
       const data = payload.data;
