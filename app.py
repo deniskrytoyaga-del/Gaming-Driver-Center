@@ -1,7 +1,7 @@
 from __future__ import annotations
 import os, threading, webbrowser
 from pathlib import Path
-from flask import Flask, jsonify, send_from_directory
+from flask import Flask, jsonify, send_from_directory, request
 from waitress import serve
 import webview
 from backend.system_info import collect_system, build_payload
@@ -37,6 +37,9 @@ def driver_updates():
 
 @app.post("/api/driver-updates/install-all")
 def install_all():
+    # Prevent arbitrary websites from triggering a local driver installation.
+    if request.headers.get("X-GDC-Confirm") != "1" or request.host != "127.0.0.1:8765":
+        return jsonify({"ok": False, "error": "Local confirmation required"}), 403
     try:
         return jsonify({"ok": True, "data": install_all_driver_updates()})
     except Exception as exc:
