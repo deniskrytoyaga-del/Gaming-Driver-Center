@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>GAMING DRIVER CENTER</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+  <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body>
+  <div class="app-shell" id="appShell">
+    <!-- Custom Window Titlebar (Desktop App Feel) -->
+    <header class="window-titlebar">
+      <div class="window-titlebar-left">
+        <span class="demo-pill" title="Frontend UI Preview with Demo Data">
+          <span class="demo-dot"></span>
+          DEMO PREVIEW MODE
+        </span>
+        <span class="window-breadcrumb" id="topBreadcrumb">DASHBOARD</span>
+      </div>
+      <div class="window-titlebar-right">
+        <button class="win-btn" id="quickScanTopBtn" title="Trigger UI Scan Preview">
+          <i data-lucide="radar"></i>
+          <span>Quick Scan</span>
+        </button>
+        <div class="window-controls" aria-hidden="true">
+          <span class="win-ctrl"><i data-lucide="minus"></i></span>
+          <span class="win-ctrl"><i data-lucide="square"></i></span>
+          <span class="win-ctrl win-ctrl-close"><i data-lucide="x"></i></span>
+        </div>
+      </div>
+    </header>
+
+    <div class="app-workspace">
+      <!-- SIDEBAR -->
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+          <div class="brand-block">
+            <div class="brand-logo">
+              <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <rect x="2" y="2" width="32" height="32" rx="9" fill="url(#gdcGrad)" fill-opacity="0.2" stroke="url(#gdcGrad)" stroke-width="1.5"/>
+                <path d="M12 13.5L18 10L24 13.5V20.5L18 24L12 20.5V13.5Z" stroke="#00D9FF" stroke-width="1.6"/>
+                <circle cx="18" cy="17" r="2.5" fill="#8065FF"/>
+                <defs>
+                  <linearGradient id="gdcGrad" x1="2" y1="2" x2="34" y2="34" gradientUnits="userSpaceOnUse">
+                    <stop stop-color="#8065FF"/>
+                    <stop offset="1" stop-color="#00D9FF"/>
+                  </linearGradient>
+                </defs>
+              </svg>
+            </div>
+            <div class="brand-text">
+              <div class="brand-title">GAMING DRIVER CENTER</div>
+              <div class="brand-subtitle">DRIVER MANAGEMENT</div>
+            </div>
+          </div>
+        </div>
+
+        <nav class="sidebar-nav" aria-label="Main Navigation">
+          <button class="nav-item active" data-page="dashboard">
+            <i data-lucide="layout-dashboard"></i>
+            <span class="nav-label">DASHBOARD</span>
+          </button>
+          <button class="nav-item" data-page="hardware">
+            <i data-lucide="cpu"></i>
+            <span class="nav-label">MY HARDWARE</span>
+          </button>
+          <button class="nav-item" data-page="drivers">
+            <i data-lucide="layers"></i>
+            <span class="nav-label">DRIVERS</span>
+            <span class="nav-badge" id="navDriversBadge">6</span>
+          </button>
+          <button class="nav-item" data-page="updates">
+            <i data-lucide="download-cloud"></i>
+            <span class="nav-label">UPDATES</span>
+            <span class="nav-badge nav-badge-accent" id="navUpdatesBadge">2</span>
+          </button>
+          <button class="nav-item" data-page="optimization">
+            <i data-lucide="gauge"></i>
+            <span class="nav-label">OPTIMIZATION</span>
+          </button>
+          <button class="nav-item" data-page="history">
+            <i data-lucide="history"></i>
+            <span class="nav-label">HISTORY</span>
+          </button>
+          <button class="nav-item" data-page="settings">
+            <i data-lucide="settings"></i>
+            <span class="nav-label">SETTINGS</span>
+          </button>
+        </nav>
+
+        <div class="sidebar-footer">
+          <div class="status-card">
+            <div class="status-row">
+              <span class="status-indicator online" id="engineStatusDot"></span>
+              <span class="status-text" id="engineStatusText">UI Ready • Demo Data</span>
+            </div>
+            <div class="version-row">
+              <span class="version-label">Build</span>
+              <span class="version-value">v2.4.0-UI</span>
+            </div>
+          </div>
+
+          <button class="collapse-btn" id="sidebarCollapseBtn" title="Toggle Sidebar">
+            <i data-lucide="panel-left-close" id="collapseIcon"></i>
+            <span class="collapse-label">Collapse Menu</span>
+          </button>
+        </div>
+      </aside>
+
+      <!-- MAIN CONTENT AREA -->
+      <main class="main-content" id="mainContent">
+        <!-- ==================== 1. DASHBOARD ==================== -->
+        <section class="page active" id="page-dashboard" aria-labelledby="dashHeading">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="dashHeading">Welcome back, Gamer.</h1>
+              <p class="page-subtitle">Your gaming system at a glance.</p>
+            </div>
+            <div class="header-meta">
+              <span class="meta-chip">
+                <i data-lucide="shield-check"></i>
+                Profile: Performance Demo
+              </span>
+            </div>
+          </div>
+
+          <!-- Top 4 Summary Cards -->
+          <div class="overview-grid" id="dashboardOverviewGrid">
+            <!-- Populated by script.js -->
+          </div>
+
+          <!-- Central SYSTEM HEALTH Block -->
+          <div class="health-panel card-surface">
+            <div class="health-visual">
+              <div class="radial-wrap">
+                <svg class="radial-svg" viewBox="0 0 160 160">
+                  <defs>
+                    <linearGradient id="healthRingGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                      <stop offset="0%" stop-color="#8065FF" />
+                      <stop offset="100%" stop-color="#00D9FF" />
+                    </linearGradient>
+                  </defs>
+                  <circle class="radial-bg" cx="80" cy="80" r="66" />
+                  <circle class="radial-progress" id="healthCircle" cx="80" cy="80" r="66" />
+                </svg>
+                <div class="radial-center">
+                  <span class="radial-score" id="healthScoreValue">86%</span>
+                  <span class="radial-caption" id="healthScoreLabel">OPTIMAL</span>
+                </div>
+              </div>
+              <div class="scan-laser" id="scanLaser"></div>
+            </div>
+
+            <div class="health-info">
+              <div class="health-kicker">SYSTEM HEALTH</div>
+              <h2 class="health-heading" id="healthStatusTitle">2 Driver Updates Recommended</h2>
+              <p class="health-desc" id="healthStatusDesc">
+                Core chipset and storage controllers are synchronized. Updating your GPU and Audio packages will unlock latest game-ready optimizations.
+              </p>
+
+              <div class="health-metrics">
+                <div class="health-metric-item">
+                  <span class="metric-label">Driver Status</span>
+                  <span class="metric-value status-warn-text" id="healthDriverState">Action Recommended</span>
+                </div>
+                <div class="health-metric-item">
+                  <span class="metric-label">Available Updates</span>
+                  <span class="metric-value cyan-text" id="healthUpdatesCount">2 Packages</span>
+                </div>
+                <div class="health-metric-item">
+                  <span class="metric-label">Last Check</span>
+                  <span class="metric-value" id="healthLastCheck">Today, 14:20 (Demo)</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="health-action">
+              <button class="btn-scan" id="scanPcBtn">
+                <span class="btn-scan-glow"></span>
+                <i data-lucide="scan-line" id="scanBtnIcon"></i>
+                <span id="scanBtnText">SCAN MY PC</span>
+              </button>
+              <span class="scan-hint" id="scanSubHint">Simulated frontend diagnostic</span>
+            </div>
+          </div>
+
+          <!-- RECENT ACTIVITY -->
+          <div class="section-block">
+            <div class="section-header-row">
+              <h3 class="section-title">RECENT ACTIVITY</h3>
+              <button class="link-btn" data-nav-target="history">
+                View Full Timeline <i data-lucide="arrow-right"></i>
+              </button>
+            </div>
+            <div class="activity-list card-surface" id="dashboardActivityList">
+              <!-- Populated by script.js -->
+            </div>
+          </div>
+        </section>
+
+        <!-- ==================== 2. MY HARDWARE ==================== -->
+        <section class="page" id="page-hardware" aria-labelledby="hwHeading">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="hwHeading">My Hardware</h1>
+              <p class="page-subtitle">Detailed component architecture and bound driver revisions (Demo Configuration).</p>
+            </div>
+            <div class="header-meta">
+              <span class="meta-chip">
+                <i data-lucide="monitor-check"></i>
+                7 Subsystem Modules
+              </span>
+            </div>
+          </div>
+
+          <div class="hardware-grid" id="hardwareGrid">
+            <!-- Populated by script.js -->
+          </div>
+        </section>
+
+        <!-- ==================== 3. DRIVERS ==================== -->
+        <section class="page" id="page-drivers" aria-labelledby="drvHeading">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="drvHeading">Driver Management</h1>
+              <p class="page-subtitle">Inspect installed versions, release deltas, and package status across devices.</p>
+            </div>
+            <div class="header-actions">
+              <div class="search-box">
+                <i data-lucide="search"></i>
+                <input type="text" id="driverSearchInput" placeholder="Filter by device or vendor..." aria-label="Search drivers" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Filter Tabs -->
+          <div class="filter-bar" role="tablist" aria-label="Driver Categories">
+            <button class="filter-tab active" data-category="All">All</button>
+            <button class="filter-tab" data-category="Graphics">Graphics</button>
+            <button class="filter-tab" data-category="Chipset">Chipset</button>
+            <button class="filter-tab" data-category="Audio">Audio</button>
+            <button class="filter-tab" data-category="Network">Network</button>
+            <button class="filter-tab" data-category="Other">Other</button>
+          </div>
+
+          <!-- Horizontal Driver Cards -->
+          <div class="drivers-list" id="driversList">
+            <!-- Populated by script.js -->
+          </div>
+        </section>
+
+        <!-- ==================== 4. UPDATES ==================== -->
+        <section class="page" id="page-updates" aria-labelledby="updHeading">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="updHeading">Available Updates</h1>
+              <p class="page-subtitle">Stage and preview driver package deployments with simulated progress states.</p>
+            </div>
+          </div>
+
+          <!-- Prominent Updates Banner -->
+          <div class="updates-hero card-surface">
+            <div class="updates-hero-left">
+              <div class="updates-counter-badge">
+                <span class="updates-big-num" id="updatesAvailableBig">2</span>
+                <span class="updates-big-label">UPDATES<br/>READY</span>
+              </div>
+              <div class="updates-hero-text">
+                <h2 id="updatesHeroTitle">Game-Ready &amp; Audio Driver Packages Available</h2>
+                <p id="updatesHeroSubtitle">Select individual packages or deploy all queued updates simultaneously.</p>
+              </div>
+            </div>
+            <div class="updates-hero-actions">
+              <button class="btn-secondary" id="updateSelectedBtn">
+                <i data-lucide="check-square"></i>
+                <span>UPDATE SELECTED</span>
+              </button>
+              <button class="btn-primary" id="updateAllBtn">
+                <i data-lucide="sparkles"></i>
+                <span>UPDATE ALL</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Updates List -->
+          <div class="updates-list" id="updatesList">
+            <!-- Populated by script.js -->
+          </div>
+        </section>
+
+        <!-- ==================== 5. OPTIMIZATION ==================== -->
+        <section class="page" id="page-optimization" aria-labelledby="optHeading">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="optHeading">Gaming Optimization</h1>
+              <p class="page-subtitle">System-level tuning profiles to reduce latency and stabilize frame pacing.</p>
+            </div>
+            <div class="header-meta">
+              <span class="meta-chip cyan-chip" id="optActiveCountChip">
+                <i data-lucide="zap"></i>
+                3 / 5 Profiles Optimal
+              </span>
+            </div>
+          </div>
+
+          <div class="optimization-grid" id="optimizationGrid">
+            <!-- Populated by script.js -->
+          </div>
+        </section>
+
+        <!-- ==================== 6. HISTORY ==================== -->
+        <section class="page" id="page-history" aria-labelledby="histHeading">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="histHeading">Activity History</h1>
+              <p class="page-subtitle">Chronological audit log of scans, discovered packages, downloads, and status events.</p>
+            </div>
+            <div class="header-actions">
+              <div class="filter-bar compact" id="historyFilterBar">
+                <button class="filter-tab active" data-history-type="all">All Events</button>
+                <button class="filter-tab" data-history-type="scan">Scans</button>
+                <button class="filter-tab" data-history-type="install">Installs</button>
+                <button class="filter-tab" data-history-type="error">Alerts</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="timeline-container card-surface" id="historyTimeline">
+            <!-- Populated by script.js -->
+          </div>
+        </section>
+
+        <!-- ==================== 7. SETTINGS ==================== -->
+        <section class="page" id="page-settings" aria-labelledby="setHeading">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title" id="setHeading">Settings</h1>
+              <p class="page-subtitle">Configure UI preferences, notification behavior, and future backend bridge parameters.</p>
+            </div>
+          </div>
+
+          <div class="settings-grid">
+            <!-- Appearance -->
+            <div class="settings-card card-surface">
+              <div class="settings-card-header">
+                <div class="settings-icon"><i data-lucide="palette"></i></div>
+                <div>
+                  <h3>Appearance</h3>
+                  <p>Customize visual contrast, accent highlights, and motion intensity.</p>
+                </div>
+              </div>
+              <div class="settings-body">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Accent Glow Highlight</span>
+                    <span class="setting-desc">Choose primary highlight emphasis across cards</span>
+                  </div>
+                  <div class="segmented-control" id="accentSelector">
+                    <button class="seg-btn active" data-accent="violet">Nebula Violet</button>
+                    <button class="seg-btn" data-accent="cyan">Cyber Cyan</button>
+                  </div>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Glass Surface Transparency</span>
+                    <span class="setting-desc">Enable translucent backdrop blur on panels</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="toggleGlass" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Language -->
+            <div class="settings-card card-surface">
+              <div class="settings-card-header">
+                <div class="settings-icon"><i data-lucide="globe"></i></div>
+                <div>
+                  <h3>Language</h3>
+                  <p>Interface localization preference for menus and driver notes.</p>
+                </div>
+              </div>
+              <div class="settings-body">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Display Language</span>
+                    <span class="setting-desc">Applied across navigation and component labels</span>
+                  </div>
+                  <select class="ui-select" id="languageSelect" aria-label="Display Language">
+                    <option value="en" selected>English (United States)</option>
+                    <option value="ru">Русский (Demo Preview)</option>
+                    <option value="de">Deutsch</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Notifications -->
+            <div class="settings-card card-surface">
+              <div class="settings-card-header">
+                <div class="settings-icon"><i data-lucide="bell-ring"></i></div>
+                <div>
+                  <h3>Notifications</h3>
+                  <p>Control in-app toast alerts and Game-Ready release banners.</p>
+                </div>
+              </div>
+              <div class="settings-body">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Toast Notifications</span>
+                    <span class="setting-desc">Show floating status confirmations for UI actions</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="toggleToasts" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">WHQL &amp; Game-Ready Alerts</span>
+                    <span class="setting-desc">Highlight certified GPU releases on Dashboard</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="toggleWhql" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Automatic Scanning -->
+            <div class="settings-card card-surface">
+              <div class="settings-card-header">
+                <div class="settings-icon"><i data-lucide="radar"></i></div>
+                <div>
+                  <h3>Automatic Scanning</h3>
+                  <p>Schedule parameters ready for Python service integration.</p>
+                </div>
+              </div>
+              <div class="settings-body">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Scheduled Hardware Check</span>
+                    <span class="setting-desc">Automatically verify driver revisions in background</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="toggleAutoScan" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Scan Interval</span>
+                    <span class="setting-desc">Frequency passed to backend scheduler</span>
+                  </div>
+                  <select class="ui-select" id="scanIntervalSelect" aria-label="Scan Interval">
+                    <option value="daily" selected>Every 24 Hours</option>
+                    <option value="weekly">Weekly</option>
+                    <option value="launch">On App Launch</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            <!-- Startup Behavior -->
+            <div class="settings-card card-surface">
+              <div class="settings-card-header">
+                <div class="settings-icon"><i data-lucide="power"></i></div>
+                <div>
+                  <h3>Startup Behavior</h3>
+                  <p>Windows desktop shell launch and system tray preferences.</p>
+                </div>
+              </div>
+              <div class="settings-body">
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Launch with Windows</span>
+                    <span class="setting-desc">Start minimized in notification tray on boot</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="toggleStartup" />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+                <div class="setting-row">
+                  <div class="setting-info">
+                    <span class="setting-name">Minimize to Tray on Close</span>
+                    <span class="setting-desc">Keep telemetry listener active when window closes</span>
+                  </div>
+                  <label class="toggle-switch">
+                    <input type="checkbox" id="toggleTray" checked />
+                    <span class="toggle-slider"></span>
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- About Application -->
+            <div class="settings-card card-surface">
+              <div class="settings-card-header">
+                <div class="settings-icon"><i data-lucide="info"></i></div>
+                <div>
+                  <h3>About Application</h3>
+                  <p>Architecture readiness and frontend module diagnostics.</p>
+                </div>
+              </div>
+              <div class="settings-body about-box">
+                <div class="about-line">
+                  <span>Application</span>
+                  <strong>GAMING DRIVER CENTER (GDC)</strong>
+                </div>
+                <div class="about-line">
+                  <span>Frontend Version</span>
+                  <strong>2.4.0-UI (Standalone HTML/CSS/JS)</strong>
+                </div>
+                <div class="about-line">
+                  <span>Backend Bridge</span>
+                  <span class="bridge-status" id="backendBridgeBadge">Disconnected (Demo Mode)</span>
+                </div>
+                <div class="about-actions">
+                  <button class="btn-secondary btn-sm" id="resetDemoBtn">
+                    <i data-lucide="rotate-ccw"></i>
+                    <span>Reset Demo State</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+
+  <!-- MODAL FOR DETAILS -->
+  <div class="modal-backdrop" id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" hidden>
+    <div class="modal-window">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <div class="modal-icon" id="modalIconWrap">
+            <i data-lucide="cpu"></i>
+          </div>
+          <div>
+            <span class="modal-kicker" id="modalKicker">PACKAGE SPECIFICATION</span>
+            <h3 class="modal-title" id="modalTitle">Component Details</h3>
+          </div>
+        </div>
+        <button class="modal-close-btn" id="modalCloseBtn" aria-label="Close modal">
+          <i data-lucide="x"></i>
+        </button>
+      </div>
+      <div class="modal-body" id="modalBody">
+        <!-- Populated dynamically -->
+      </div>
+      <div class="modal-footer" id="modalFooter">
+        <!-- Populated dynamically -->
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION CONTAINER -->
+  <div class="toast-container" id="toastContainer" aria-live="polite"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
