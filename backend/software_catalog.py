@@ -80,7 +80,7 @@ CATALOG: list[dict[str, Any]] = [
         "kind": "gaming", "publisher": "Valve Corp.",
         "description": "Клиент Steam для установки и запуска игр.",
         "applies": "Только если пользуешься Steam",
-        "patterns": [r"Steam"],
+        "patterns": [r"^Steam$"],
         "url": "https://cdn.akamai.steamstatic.com/client/installer/SteamSetup.exe", "format": "exe",
         "hosts": ["cdn.akamai.steamstatic.com", "steamcdn-a.akamaihd.net"],
     },
