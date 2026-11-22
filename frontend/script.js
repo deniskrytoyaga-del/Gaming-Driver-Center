@@ -362,7 +362,7 @@
       document.querySelectorAll('#accentSelector .seg-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.accent===appState.settings.accent));
       const glass=document.getElementById('toggleGlass'); if(glass) glass.checked=appState.settings.glass!==false;
       const lang=document.getElementById('languageSelect'); if(lang) lang.value=appState.settings.language||'ru';
-      const toast=document.getElementById('toggleToasts'); if(toast) toast.checked=appState.settings.toasts!==false;
+      const toast=document.getElementById('toggleToasts'); if(toast) toast.checked=appState.settings.toasts!==false;\n      const startup=document.getElementById('toggleStartup'); if(startup) startup.checked=!!saved.startupLaunch;\n      fetch('/api/optimization',{cache:'no-store'}).then(r=>r.json()).then(v=>{const el=document.getElementById('toggleStartup');if(v.ok&&el)el.checked=!!v.data.startup;}).catch(()=>{});
     } catch (_) {}
   }
   function bindSettingsControls() {
@@ -378,6 +378,18 @@
     if(lang) lang.addEventListener('change',e=>{appState.settings.language=e.target.value;persistSettings();showToast('Настройки сохранены','Язык интерфейса будет применён после полной локализации.','info');});
     const toast=document.getElementById('toggleToasts');
     if(toast) toast.addEventListener('change',e=>{appState.settings.toasts=e.target.checked;persistSettings();});
+    const startup=document.getElementById('toggleStartup');
+    if(startup) startup.addEventListener('change',async e=>{
+      const enabled=e.target.checked;
+      if(!window.confirm((enabled?'Добавить':'Убрать')+' Gaming Driver Center из автозапуска Windows?')){e.target.checked=!enabled;return;}
+      startup.disabled=true;
+      try{
+        const response=await fetch('/api/settings/startup',{method:'POST',headers:{'Content-Type':'application/json','X-GDC-Confirm':'1'},body:JSON.stringify({enabled})});
+        const result=await response.json();if(!response.ok||!result.ok)throw new Error(result.error||'Не удалось изменить автозапуск');
+        appState.settings.startupLaunch=enabled;showToast('Настройка сохранена',result.data.message,'success');
+      }catch(error){e.target.checked=!enabled;showToast('Ошибка автозапуска',error.message,'error');}
+      finally{startup.disabled=false;}
+    });
     const reset=document.getElementById('resetDemoBtn');
     if(reset) reset.addEventListener('click',async()=>{
       appState.settings={accent:'violet',glass:true,language:'ru',toasts:true};
