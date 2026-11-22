@@ -115,7 +115,30 @@
     bindModalControls();
     renderAll();
     refreshIcons();
+    connectToLocalBackend();
   });
+
+  async function connectToLocalBackend() {
+    const badge = document.querySelector('.demo-pill');
+    try {
+      const response = await fetch('/api/system', { cache: 'no-store' });
+      if (!response.ok) throw new Error('Local system scan failed');
+      const result = await response.json();
+      if (!result.ok || !result.data) throw new Error(result.error || 'No system data');
+      window.GDCFrontend.loadExternalData(result.data);
+      window.GDCFrontend.setBackendConnected(true);
+      if (badge) {
+        badge.innerHTML = '<span class="demo-dot"></span> LOCAL SYSTEM MODE';
+        badge.title = 'Live hardware inventory from Windows; driver updates are not yet verified.';
+      }
+    } catch (error) {
+      window.GDCFrontend.setBackendConnected(false);
+      if (badge) {
+        badge.innerHTML = '<span class="demo-dot"></span> PREVIEW MODE';
+        badge.title = 'Run the Windows desktop application to enable local hardware detection.';
+      }
+    }
+  }
 
   function refreshIcons() {
     if (window.lucide && typeof window.lucide.createIcons === 'function') window.lucide.createIcons();
