@@ -42,7 +42,7 @@
     return JSON.parse(JSON.stringify(obj));
   }
 
-  let appState = cloneState(INITIAL_DEMO_STATE);
+  let appState = cloneState(INITIAL_APP_STATE);
 
   window.GDCFrontend = {
     getState: () => cloneState(appState),
